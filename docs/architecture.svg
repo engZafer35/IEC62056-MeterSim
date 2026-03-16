@@ -29,27 +29,27 @@
   <circle cx="80" cy="40" r="160" fill="url(#glowA)" opacity="0.45"/>
   <circle cx="520" cy="210" r="200" fill="url(#glowB)" opacity="0.45"/>
 
-  <!-- Ba_l1k -->
+  <!-- Header -->
   <text x="32" y="50" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">
-    IEC 62056 MeterSim · Uçtan Uca Mimari
+    IEC 62056 MeterSim · End-to-End Architecture
   </text>
   <text x="32" y="70" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="12">
-    TCP istemciden sayaç simülatörüne, yük profili dosyas1na kadar veri ak1_1
+    Data flow from TCP client to meter simulator and load profile file
   </text>
 
-  <!-- Ad1m 1: TCP Client -->
+  <!-- Step 1: TCP Client -->
   <rect x="40" y="100" width="150" height="80" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
   <text x="58" y="126" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
     TCP Client
   </text>
   <text x="58" y="144" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
-    PC, STM32, test arac1
+    PC, STM32, test tool
   </text>
   <text x="58" y="162" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
     /?! , ACK050 , P.01(...)
   </text>
 
-  <!-- Ad1m 2: TCP Sunucu -->
+  <!-- Step 2: TCP Server -->
   <rect x="220" y="100" width="150" height="80" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
   <text x="236" y="126" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
     TCP Sunucu
@@ -58,13 +58,13 @@
     MeterTCPServer
   </text>
   <text x="236" y="162" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
-    Soket ’ sat1r bazl1 mesajlar
+    Socket ? line-based messages
   </text>
 
-  <!-- Ad1m 3: Protokol -->
+  <!-- Step 3: Protocol -->
   <rect x="400" y="100" width="150" height="80" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
   <text x="416" y="126" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
-    Protokol Katman1
+    Protocol Layer
   </text>
   <text x="416" y="144" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
     ConnectionState
@@ -73,25 +73,25 @@
     IEC 62056-21 benzeri state machine
   </text>
 
-  <!-- Ad1m 4: Sayaç Çekirdei -->
+  <!-- Step 4: Meter Core -->
   <rect x="580" y="90" width="120" height="90" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
   <text x="594" y="116" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
-    Sayaç
+    Meter
   </text>
   <text x="594" y="134" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
     MeterSimulator
   </text>
   <text x="594" y="152" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
-    OBIS deerleri, 1.8.0
+    OBIS values, 1.8.0
   </text>
 
-  <!-- Ad1m 5: Yük Profili -->
+  <!-- Step 5: Load Profile -->
   <rect x="540" y="190" width="160" height="50" rx="12" ry="12" fill="#020617" stroke="#22C55E" stroke-width="1.2"/>
   <text x="552" y="210" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">
     meter_data.txt
   </text>
   <text x="552" y="226" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="10">
-    P.01(YYMMDDhhmm)(vvvv.vv) kay1tlar1
+    P.01(YYMMDDhhmm)(vvvv.vv) records
   </text>
 
   <!-- Oklar -->
@@ -107,25 +107,25 @@
   <path d="M640 180 V184" stroke="#22C55E" stroke-width="1.8" stroke-linecap="round"/>
   <path d="M635 184 L640 190 L645 184" fill="#4ADE80"/>
 
-  <!-- Üst aç1klama etiketleri -->
+  <!-- Top labels -->
   <rect x="94" y="84" width="82" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
   <text x="104" y="95" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
-    Uygulama / Donan1m
+    Application / Device
   </text>
 
   <rect x="266" y="84" width="92" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
   <text x="276" y="95" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
-    Balant1 Katman1
+    Connection Layer
   </text>
 
   <rect x="432" y="84" width="88" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
   <text x="442" y="95" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
-    Protokol Mant11
+    Protocol Logic
   </text>
 
   <rect x="586" y="72" width="104" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
   <text x="596" y="83" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
-    Durum &amp; Yük Profili
+    State &amp; Load Profile
   </text>
 </svg>
 
