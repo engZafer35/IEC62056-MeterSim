@@ -21,6 +21,7 @@
           <a href="#architecture">Mimari</a>
           <a href="#protocol">Protokol Akışı</a>
           <a href="#get-started">Başlarken</a>
+          <a href="#downloads">Kaynak Kod</a>
         </nav>
       </div>
     </header>
@@ -173,10 +174,12 @@ Meter  → Client :
             </div>
             <div class="flow-column">
               <h3>3. Load Profile (P.01)</h3>
-              <pre><code>Client → Meter: P.01(YYMMDDhhmm)(YYMMDDhhmm)
+              <pre><code>Client → Meter: 
+  P.01(YYMMDDhhmm)(YYMMDDhhmm)
+  Ör: P.01(2401010000)(2401020000)
 Meter  → Client :
- P.01(2401010000)(0000.42)
- P.01(2401010015)(0000.38)
+  P.01(2401010000)(0000.42)
+  P.01(2401010015)(0000.38)
  ...
  !</code></pre>
             </div>
@@ -222,7 +225,7 @@ P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
           </p>
           <div class="download-grid">
             <a
-              class="btn-link primary-link"
+              class="btn primary"
               href="https://github.com/engZafer35/IEC62056-MeterSim"
               target="_blank"
               rel="noopener noreferrer"
@@ -236,39 +239,6 @@ P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
               rel="noopener noreferrer"
             >
               ZIP Olarak İndir (Python Projesi)
-            </a>
-          </div>
-          <p class="download-note">
-            Not: İleride Windows için tek dosyalık bir çalıştırılabilir (EXE) paket de yayınlanabilir;
-            bu durumda bu bölümden doğrudan indirme bağlantısı eklenecektir.
-          </p>
-        </div>
-      </section>
-
-      <section id="downloads" class="section">
-        <div class="container">
-          <h2>Kaynak Kod ve İndirmeler</h2>
-          <p class="section-lead">
-            Projenin tamamı açık kaynak olarak GitHub üzerinde yayınlanmaktadır. Buradan
-            hem kaynak koda göz atabilir hem de hazır derlenmiş sürümleri
-            (çıktı dosyalarını) paylaştığınızda indirme bağlantılarını ekleyebilirsiniz.
-          </p>
-          <div class="downloads-actions">
-            <a
-              class="btn primary"
-              href="https://github.com/engzafer35/IEC62056-MeterSim"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub'da Kodu Görüntüle
-            </a>
-            <a
-              class="btn ghost"
-              href="https://github.com/engzafer35/IEC62056-MeterSim/releases"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Derlenmiş Uygulamalar (Releases)
             </a>
           </div>
         </div>
