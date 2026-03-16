@@ -62,7 +62,7 @@
 
   <!-- OBIS label -->
   <text x="44" y="146" fill="#6B7280" font-family="system-ui, -apple-system, sans-serif" font-size="7.5">
-    OBIS 1.8.0  ·  IEC 62056-21  ·  TCP
+    OBIS 1.8.0    IEC 62056-21    TCP
   </text>
 </svg>
 
