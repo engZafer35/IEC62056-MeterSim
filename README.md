@@ -34,47 +34,6 @@ simüle eder ve bunları hem **TCP readout** olarak hem de **dosya** üzerinden 
 
 ---
 
-## Mimarinin Genel Görünümü
-
-```text
-          +---------------------------+
-          |       TCP Client         |
-          |  (PC, STM32, vb.)        |
-          +-------------+------------+
-                        |
-                IEC 62056-21 Benzeri
-               Mesajlar (ASCII, CRLF)
-                        |
-        =====================================
-                        |
-          +-------------v------------+
-          |     TCP Sunucu          |
-          |   (MeterTCPServer)      |
-          +-------------+-----------+
-                        |
-                        v
-          +---------------------------+
-          |   Protokol Katmanı       |
-          |  (ConnectionState /      |
-          |   iec62056_protocol.py)  |
-          +-------------+------------+
-                        |
-                        v
-          +---------------------------+
-          |   Sayaç Modeli &         |
-          |   Yük Profili            |
-          |   (MeterSimulator)       |
-          +-------------+------------+
-                        |
-                        v
-          +---------------------------+
-          |   meter_data.txt         |
-          |   (P.01(YYMMDDhhmm)...)  |
-          +---------------------------+
-```
-
----
-
 ## Kurulum
 
 ### Gereksinimler
