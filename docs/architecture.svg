@@ -58,7 +58,8 @@
     MeterTCPServer
   </text>
   <text x="236" y="162" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
-    Socket line-based messages
+    Socket line-based 
+    <tspan x="236" dy="1.2em">messages</tspan>
   </text>
 
   <!-- Step 3: Protocol -->
@@ -70,7 +71,8 @@
     ConnectionState
   </text>
   <text x="416" y="162" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
-    IEC 62056-21 Similar State Machine
+    IEC 62056-21 
+    <tspan x="416" dy="1.2em">Similar State Machine</tspan>
   </text>
 
   <!-- Step 4: Meter Core -->
@@ -91,7 +93,8 @@
     meter_data.txt
   </text>
   <text x="552" y="226" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="10">
-    P.01(YYMMDDhhmm)(vvvv.vv) records
+    P.01(YYMMDDhhmm)(vvvv.vv)
+    <tspan x="552" dy="1.2em">records</tspan>
   </text>
 
   <!-- Oklar -->

@@ -217,18 +217,52 @@ P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
         <div class="container">
           <h2>Text Bazlı Günlük Tüketim Görselleştirme</h2>
           <p class="section-lead">
-            Simülatörün ürettiği yük profili ile, günlük tüketimi sade bir text grafikle
-            dahi analiz edebilirsiniz.
+            Simülatörün ürettiği yük profili ile, günlük tüketimi basit ama şık bir
+            bar grafik olarak görselleştirebilirsiniz.
           </p>
-          <pre class="ascii-diagram"><code>Saat   Tüketim (kWh)   Grafik
------  --------------  ----------------------------
-00:00      0.42        ################
-00:15      0.38        ###############
-00:30      0.35        #############
-...
-23:45      0.41        ###############
-
-Toplam ≈ 12.34 kWh  (OBIS 1.8.0 ≈ 12.34 kWh)</code></pre>
+          <div class="lp-chart">
+            <div class="lp-chart-header">
+              <span>Örnek Günlük Yük Profili</span>
+              <span class="lp-chart-total">Toplam ≈ 12.34 kWh (1.8.0 ≈ 12.34 kWh)</span>
+            </div>
+            <div class="lp-chart-body">
+              <div class="lp-row">
+                <span class="lp-time">00:00</span>
+                <div class="lp-bar-wrapper">
+                  <div class="lp-bar" style="width: 80%"></div>
+                </div>
+                <span class="lp-value">0.42</span>
+              </div>
+              <div class="lp-row">
+                <span class="lp-time">00:15</span>
+                <div class="lp-bar-wrapper">
+                  <div class="lp-bar" style="width: 72%"></div>
+                </div>
+                <span class="lp-value">0.38</span>
+              </div>
+              <div class="lp-row">
+                <span class="lp-time">00:30</span>
+                <div class="lp-bar-wrapper">
+                  <div class="lp-bar" style="width: 65%"></div>
+                </div>
+                <span class="lp-value">0.35</span>
+              </div>
+              <div class="lp-row lp-row-faded">
+                <span class="lp-time">...</span>
+                <div class="lp-bar-wrapper">
+                  <div class="lp-bar" style="width: 68%"></div>
+                </div>
+                <span class="lp-value">...</span>
+              </div>
+              <div class="lp-row">
+                <span class="lp-time">23:45</span>
+                <div class="lp-bar-wrapper">
+                  <div class="lp-bar" style="width: 78%"></div>
+                </div>
+                <span class="lp-value">0.41</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
