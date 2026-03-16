@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>IEC 62056 MeterSim – Elektrik Sayacı Simülatörü</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-content">
+        <div class="logo">
+          <span class="logo-mark">⚡</span>
+          <span class="logo-text">IEC 62056 MeterSim</span>
+        </div>
+        <nav class="nav">
+          <a href="#overview">Genel Bakış</a>
+          <a href="#architecture">Mimari</a>
+          <a href="#protocol">Protokol Akışı</a>
+          <a href="#get-started">Başlarken</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="hero" class="hero">
+        <div class="container hero-inner">
+          <div class="hero-text">
+            <h1>IEC 62056 Elektrik Sayacı Simülatörü</h1>
+            <p class="hero-subtitle">
+              Geliştiriciler, test mühendisleri ve gömülü sistem tasarımcıları için
+              <strong>IEC 62056-21 uyumlu</strong> TCP tabanlı elektrik sayacı simülatörü.
+              Gerçek donanıma ihtiyaç duymadan entegrasyonlarınızı test edin.
+            </p>
+            <div class="hero-actions">
+              <a href="#get-started" class="btn primary">Hemen Başlayın</a>
+              <a href="#architecture" class="btn ghost">Mimariyi İnceleyin</a>
+            </div>
+            <ul class="hero-highlights">
+              <li>Short/default readout (OBIS 1.8.0, 1.7.0, 32.7.0, tarih/saat)</li>
+              <li>15 dk aralıklı yük profili (P.01) simülasyonu</li>
+              <li>TCP üzerinden IEC 62056 benzeri mesaj akışı</li>
+            </ul>
+          </div>
+          <div class="hero-visual">
+            <div class="meter-card">
+              <div class="meter-header">
+                <span class="meter-title">Elektrik Sayacı</span>
+                <span class="meter-tag">Simülatör</span>
+              </div>
+              <div class="meter-body">
+                <figure class="meter-figure">
+                  <img
+                    src="meter.svg"
+                    alt="Elektrik sayacı illüstrasyonu"
+                    class="meter-image"
+                  />
+                </figure>
+                <div class="meter-readout">
+                  <div class="meter-row">
+                    <span class="label">Seri No</span>
+                    <span class="value">12345678</span>
+                  </div>
+                  <div class="meter-row">
+                    <span class="label">Toplam Enerji</span>
+                    <span class="value">0012345.67 kWh</span>
+                  </div>
+                  <div class="meter-row">
+                    <span class="label">Anlık Güç</span>
+                    <span class="value">0001.42 kW</span>
+                  </div>
+                  <div class="meter-row">
+                    <span class="label">Gerilim</span>
+                    <span class="value">230.4 V</span>
+                  </div>
+                </div>
+              </div>
+              <div class="meter-footer">
+                <span class="badge">IEC 62056-21</span>
+                <span class="badge secondary">TCP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="overview" class="section">
+        <div class="container">
+          <h2>Bu Proje Ne Yapar?</h2>
+          <p class="section-lead">
+            IEC 62056-21 protokolüne benzer bir akışla, elektrik sayacını
+            <strong>tamamen yazılım tabanlı</strong> olarak simüle eder. Gerçek ölçüm yapmaz;
+            bunun yerine zaman içinde artan, pozitif ve tutarlı bir enerji tüketim profili oluşturur.
+          </p>
+          <div class="grid grid-3">
+            <article class="card">
+              <h3>Short / Default Readout</h3>
+              <p>
+                Tipik sayaçlarda olduğu gibi <code>/?!</code> handshake ve
+                <code>ACK050</code> sonrasında, seri numarası, toplam tüketim,
+                anlık güç, gerilim ve tarih/saat bilgilerini içeren bir short readout üretir.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Yük Profili (Load Profile)</h3>
+              <p>
+                15 dakikalık aralıklarla (veya test için hızlandırılmış periyotlarla)
+                tüketim değerleri kaydeder. Bu değerler hem dosyaya
+                (<code>P.01(YYMMDDhhmm)(vvvv.vv)</code>) yazılır hem de protokol üzerinden
+                sorgulanabilir.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Geliştirici Dostu Mimari</h3>
+              <p>
+                TCP sunucu, protokol katmanı ve sayaç çekirdeği birbirinden ayrıdır.
+                Böylece UI, gerçek donanım entegrasyonu veya ek OBIS komutlarını
+                kolayca ekleyebilirsiniz.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" class="section alt">
+        <div class="container">
+          <h2>Mimari Genel Bakış</h2>
+          <p class="section-lead">
+            Proje, gerçek bir sayacın davranışını modüler katmanlara bölerek simüle eder.
+            Aşağıdaki görsel, TCP client'tan sayaç çekirdeğine ve yük profili dosyasına
+            kadar olan veri akışını üst düzeyde özetler.
+          </p>
+
+          <div class="architecture-visual">
+            <img
+              src="architecture.svg"
+              alt="IEC 62056 MeterSim mimarisini gösteren diyagram: TCP client, TCP sunucu, protokol katmanı, sayaç çekirdeği ve yük profili dosyası arasındaki veri akışı"
+              class="architecture-image"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section id="protocol" class="section">
+        <div class="container">
+          <h2>Protokol Akışı</h2>
+          <p class="section-lead">
+            Simülatör, seri port yerine TCP kullanır; ancak mesaj akışı klasik
+            IEC 62056-21 sayacı ile aynıdır.
+          </p>
+
+          <div class="protocol-flow">
+            <div class="flow-column">
+              <h3>1. Handshake</h3>
+              <pre><code>Client → Meter  : /?!&lt;CR&gt;&lt;LF&gt;
+Meter  → Client : /ISK5ME382-1003&lt;CR&gt;&lt;LF&gt;</code></pre>
+            </div>
+            <div class="flow-column">
+              <h3>2. ACK &amp; Short Readout</h3>
+              <pre><code>Client → Meter  : ACK050&lt;CR&gt;&lt;LF&gt;
+Meter  → Client : 
+ 0.0.0(12345678)
+ 1.8.0(0012345.67*kWh)
+ 2.8.0(0000123.45*kWh)
+ 1.7.0(0001.42*kW)
+ 32.7.0(230.4*V)
+ 0.9.1(14:22:31)
+ 0.9.2(24-01-01)
+ !</code></pre>
+            </div>
+            <div class="flow-column">
+              <h3>3. Load Profile (P.01)</h3>
+              <pre><code>Client → Meter  : P.01(YYMMDDhhmm)(YYMMDDhhmm)
+Meter  → Client :
+ P.01(2401010000)(0000.42)
+ P.01(2401010015)(0000.38)
+ ...
+ !</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="get-started" class="section alt">
+        <div class="container">
+          <h2>Hızlı Başlangıç</h2>
+          <div class="grid grid-2">
+            <div>
+              <h3>1. Simülatörü Çalıştırın</h3>
+              <pre><code>python run_simulator.py --host 127.0.0.1 --port 5000 \
+  --interval-seconds 10</code></pre>
+              <p>
+                Yukarıdaki örnek, 15 dakikalık intervali test için <strong>10 saniyeye</strong>
+                düşürür. Gerçekte 15 dk kullanmak için <code>--interval-seconds 900</code>
+                parametresini verebilirsiniz.
+              </p>
+            </div>
+            <div>
+              <h3>2. TCP Client ile Bağlanın</h3>
+              <pre><code>telnet 127.0.0.1 5000
+/?!&lt;Enter&gt;
+ACK050&lt;Enter&gt;
+P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
+              <p>
+                İsterseniz kendi STM32 / UART köprünüzle de aynı mesajları göndererek
+                entegrasyon testleri yapabilirsiniz.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2>Text Bazlı Günlük Tüketim Görselleştirme</h2>
+          <p class="section-lead">
+            Simülatörün ürettiği yük profili ile, günlük tüketimi sade bir text grafikle
+            dahi analiz edebilirsiniz.
+          </p>
+          <pre class="ascii-diagram"><code>Saat   Tüketim (kWh)   Grafik
+-----  --------------  ----------------------------
+00:00      0.42        ################
+00:15      0.38        ###############
+00:30      0.35        #############
+...
+23:45      0.41        ###############
+
+Toplam ≈ 12.34 kWh  (OBIS 1.8.0 ≈ 12.34 kWh)</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <span>Zafer Satılmış - IEC 62056 MeterSim · Elektrik Sayacı Simülatörü</span>
+        <span class="footer-meta">Eğitim ve test amaçlı geliştirilmiştir.</span>
+      </div>
+    </footer>
+  </body>
+</html>
+

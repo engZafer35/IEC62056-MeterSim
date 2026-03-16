@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="720" height="260" viewBox="0 0 720 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#4ADE80"/>
+    </linearGradient>
+    <linearGradient id="step" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(110 60) rotate(0) scale(180 120)">
+      <stop stop-color="#22C55E" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#22C55E" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(360 200) rotate(0) scale(200 140)">
+      <stop stop-color="#2563EB" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="720" height="260" rx="24" fill="url(#bg)" stroke="#1F2937" stroke-width="1.4"/>
+  <circle cx="80" cy="40" r="160" fill="url(#glowA)" opacity="0.45"/>
+  <circle cx="520" cy="210" r="200" fill="url(#glowB)" opacity="0.45"/>
+
+  <!-- Ba_l1k -->
+  <text x="32" y="50" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">
+    IEC 62056 MeterSim · Uçtan Uca Mimari
+  </text>
+  <text x="32" y="70" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="12">
+    TCP istemciden sayaç simülatörüne, yük profili dosyas1na kadar veri ak1_1
+  </text>
+
+  <!-- Ad1m 1: TCP Client -->
+  <rect x="40" y="100" width="150" height="80" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
+  <text x="58" y="126" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
+    TCP Client
+  </text>
+  <text x="58" y="144" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    PC, STM32, test arac1
+  </text>
+  <text x="58" y="162" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    /?! , ACK050 , P.01(...)
+  </text>
+
+  <!-- Ad1m 2: TCP Sunucu -->
+  <rect x="220" y="100" width="150" height="80" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
+  <text x="236" y="126" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
+    TCP Sunucu
+  </text>
+  <text x="236" y="144" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    MeterTCPServer
+  </text>
+  <text x="236" y="162" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    Soket ’ sat1r bazl1 mesajlar
+  </text>
+
+  <!-- Ad1m 3: Protokol -->
+  <rect x="400" y="100" width="150" height="80" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
+  <text x="416" y="126" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
+    Protokol Katman1
+  </text>
+  <text x="416" y="144" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    ConnectionState
+  </text>
+  <text x="416" y="162" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    IEC 62056-21 benzeri state machine
+  </text>
+
+  <!-- Ad1m 4: Sayaç Çekirdei -->
+  <rect x="580" y="90" width="120" height="90" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
+  <text x="594" y="116" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
+    Sayaç
+  </text>
+  <text x="594" y="134" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    MeterSimulator
+  </text>
+  <text x="594" y="152" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    OBIS deerleri, 1.8.0
+  </text>
+
+  <!-- Ad1m 5: Yük Profili -->
+  <rect x="540" y="190" width="160" height="50" rx="12" ry="12" fill="#020617" stroke="#22C55E" stroke-width="1.2"/>
+  <text x="552" y="210" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">
+    meter_data.txt
+  </text>
+  <text x="552" y="226" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="10">
+    P.01(YYMMDDhhmm)(vvvv.vv) kay1tlar1
+  </text>
+
+  <!-- Oklar -->
+  <path d="M190 140 H214" stroke="url(#edge)" stroke-width="2.1" stroke-linecap="round"/>
+  <path d="M208 135 L214 140 L208 145" fill="#4ADE80"/>
+
+  <path d="M370 140 H394" stroke="url(#edge)" stroke-width="2.1" stroke-linecap="round"/>
+  <path d="M388 135 L394 140 L388 145" fill="#4ADE80"/>
+
+  <path d="M550 140 H574" stroke="url(#edge)" stroke-width="2.1" stroke-linecap="round"/>
+  <path d="M568 135 L574 140 L568 145" fill="#4ADE80"/>
+
+  <path d="M640 180 V184" stroke="#22C55E" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M635 184 L640 190 L645 184" fill="#4ADE80"/>
+
+  <!-- Üst aç1klama etiketleri -->
+  <rect x="94" y="84" width="82" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
+  <text x="104" y="95" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
+    Uygulama / Donan1m
+  </text>
+
+  <rect x="266" y="84" width="92" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
+  <text x="276" y="95" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
+    Balant1 Katman1
+  </text>
+
+  <rect x="432" y="84" width="88" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
+  <text x="442" y="95" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
+    Protokol Mant11
+  </text>
+
+  <rect x="586" y="72" width="104" height="16" rx="8" ry="8" fill="#0B1120" stroke="#1F2937" stroke-width="0.8"/>
+  <text x="596" y="83" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="9">
+    Durum &amp; Yük Profili
+  </text>
+</svg>
+
