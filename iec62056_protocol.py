@@ -14,7 +14,7 @@ CRLF = CR + LF
 
 @dataclass
 class ProtocolConfig:
-    meter_id: str = "/ZD5ME666-1003"
+    meter_id: str = "/IEC62056-ZD666"
 
 
 class ConnectionState:

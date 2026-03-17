@@ -24,10 +24,9 @@ def parse_args():
         help="Dinlenecek TCP portu (varsayılan: 5000)",
     )
     parser.add_argument(
-        "--data-file",
-        type=Path,
-        default=Path("meter_data.txt"),
-        help="Yük profili verilerini yazacağı dosya (varsayılan: meter_data.txt)",
+        "--meter-id",
+        default="ZD5ME666-1003",
+        help="Sayaç kimliği / model numarası (varsayılan: ZD5ME666-1003)",
     )
     parser.add_argument(
         "--interval-seconds",
@@ -42,18 +41,20 @@ def parse_args():
 def main() -> None:
     args = parse_args()
 
+    data_file = Path(f"{args.meter_id}_data.txt")
+
     meter = MeterSimulator(
-        data_file=args.data_file,
+        data_file=data_file,
         interval_seconds=args.interval_seconds,
     )
     meter.start()
 
-    server = MeterTCPServer(args.host, args.port, meter)
+    server = MeterTCPServer(args.host, args.port, meter, meter_id=args.meter_id)
     server.start()
 
     print(
         f"TCP sayaç simülatörü {args.host}:{args.port} üzerinde çalışıyor. "
-        f"Yük profili dosyası: {args.data_file}"
+        f"Yük profili dosyası: {data_file}"
     )
     print(
         "Bağlantı akışı:\n"

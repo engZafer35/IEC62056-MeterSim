@@ -3,7 +3,7 @@ import threading
 from typing import Tuple
 
 from meter_model import MeterSimulator
-from iec62056_protocol import ConnectionState, CRLF
+from iec62056_protocol import ConnectionState, CRLF, ProtocolConfig
 
 
 class MeterTCPServer:
@@ -12,10 +12,11 @@ class MeterTCPServer:
     The meter opens the listening socket; external clients connect to it.
     """
 
-    def __init__(self, host: str, port: int, meter: MeterSimulator) -> None:
+    def __init__(self, host: str, port: int, meter: MeterSimulator, meter_id: str) -> None:
         self.host = host
         self.port = port
         self.meter = meter
+        self.meter_id = meter_id
         self._sock: socket.socket | None = None
         self._stop_event = threading.Event()
 
@@ -52,7 +53,8 @@ class MeterTCPServer:
             t.start()
 
     def _handle_client(self, client_sock: socket.socket, addr: Tuple[str, int]) -> None:
-        conn_state = ConnectionState(self.meter)
+        config = ProtocolConfig(meter_id=f"/{self.meter_id}")
+        conn_state = ConnectionState(self.meter, config=config)
         with client_sock:
             buf = ""
             while not self._stop_event.is_set():

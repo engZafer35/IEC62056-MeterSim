@@ -59,7 +59,13 @@ class MeterSimulator:
         self.state = MeterState()
         self.data_file = data_file
         # Snapshot dosyasını ana dosya isminden türet
-        self.snapshot_file = data_file.with_name(f"{data_file.stem}_total_endex.txt")
+        stem = data_file.stem
+        if stem.endswith("_data"):
+            base = stem[: -len("_data")]
+            snapshot_name = f"{base}_total_endex.txt"
+        else:
+            snapshot_name = f"{stem}_total_endex.txt"
+        self.snapshot_file = data_file.with_name(snapshot_name)
         self.interval_seconds = interval_seconds
         self._lock = threading.Lock()
         self._stop_event = threading.Event()
