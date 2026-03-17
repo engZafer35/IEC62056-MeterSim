@@ -556,6 +556,24 @@ pre {
   border-radius: calc(var(--radius-lg) - 6px);
 }
 
+.sequence-diagram-wrap {
+  margin-top: 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(31, 41, 55, 0.95);
+  background: rgba(15, 23, 42, 0.6);
+  padding: 0.6rem;
+  overflow: hidden;
+}
+
+.sequence-diagram-img {
+  display: block;
+  width: 60%;
+  max-width: 420px;
+  height: auto;
+  border-radius: var(--radius-sm);
+  margin: 0 auto;
+}
+
 .site-footer {
   border-top: 1px solid rgba(31, 41, 55, 0.9);
   padding: 1.1rem 0 1.4rem;

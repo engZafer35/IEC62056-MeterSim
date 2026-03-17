@@ -20,6 +20,7 @@
           <a href="#overview">Genel Bakış</a>
           <a href="#architecture">Mimari</a>
           <a href="#protocol">Protokol Akışı</a>
+          <a href="#client">Client</a>
           <a href="#get-started">Başlarken</a>
           <a href="#downloads">Kaynak Kod</a>
         </nav>
@@ -216,6 +217,125 @@ P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
                 İsterseniz kendi STM32 / UART köprünüzle de aynı mesajları göndererek
                 entegrasyon testleri yapabilirsiniz.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="client" class="section">
+        <div class="container">
+          <h2>TCP Client Test Uygulaması</h2>
+          <p class="section-lead">
+            <code>Meter_Client_Test.py</code>, simülatöre belirli aralıklarla bağlanıp hem
+            kimlik/short readout hem de seçtiğiniz tarih aralığı için yük profili (P.01) sorgulayan
+            basit bir test client'ıdır.
+          </p>
+
+          <div class="grid grid-2">
+            <div>
+              <h3>1. Client Ne İşe Yarar?</h3>
+              <p>
+                Bu script, gerçek bir uygulama veya gömülü cihazın yapacağı çağrıları taklit eder:
+              </p>
+              <ul class="section-list">
+                <li>Belirtilen IP/port'a TCP bağlantısı açar.</li>
+                <li><code>/?!</code> gönderip sayaç ID'sini okur.</li>
+                <li><code>ACK050</code> gönderip short/full OBIS readout cevabını alır.</li>
+                <li><code>P.01(start)(end)</code> komutu ile yük profili verilerini çeker.</li>
+                <li>Belirlediğiniz saniye aralığında bu işlemi tekrarlar (sürekli izleme).</li>
+              </ul>
+            </div>
+            <div>
+              <h3>2. Nasıl Çalıştırılır?</h3>
+              <pre><code>python Meter_Client_Test.py --host 127.0.0.1 --port 5000 \
+  --interval 10 --start 2603171000 --end 2603171050</code></pre>
+              <p><strong>Argümanlar:</strong></p>
+              <ul class="section-list">
+                <li><code>--host</code>: Sayaç simülatörünün IP adresi (varsayılan <code>127.0.0.1</code>).</li>
+                <li><code>--port</code>: TCP portu (varsayılan <code>5000</code>).</li>
+                <li><code>--interval</code>: Sorgular arasındaki bekleme süresi/sn (varsayılan <code>10</code>).</li>
+                <li>
+                  <code>--start</code>: Yük profili başlangıç zamanı
+                  <code>YYMMDDhhmm</code> formatında (varsayılan <code>2603171000</code>).
+                </li>
+                <li>
+                  <code>--end</code>: Bitiş zamanı (<code>YYMMDDhhmm</code>). Boş bırakılırsa script
+                  çalıştığı andaki zamanı kullanır.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="grid grid-2" style="margin-top: 1.6rem;">
+            <div>
+              <h3>3. İletişim Akışı (Sequence Diagram)</h3>
+              <div class="sequence-diagram-wrap">
+                <img
+                  src="sequence-diagram.png"
+                  alt="Client ile simülatör arasındaki istek akışı: TCP connect, handshake, OBIS readout, load profile sorgusu ve döngü"
+                  class="sequence-diagram-img"
+                />
+              </div>
+            </div>
+            <div>
+              <h3>4. Örnek Çıktı</h3>
+              <pre class="ascii-diagram"><code>Starting TCP client...
+Target: 127.0.0.1:5000
+Interval: 10 sec
+Load profile range: 2603171000 - 2603171050
+
+--- New Query ---
+ID Response:
+/ISK5ME382-1003
+
+ACK Response:
+0.0.0(12345678)
+1.8.0(0000025.73*kWh)
+1.7.0(0001.42*kW)
+32.7.0(230.4*V)
+0.9.1(10:50:00)
+0.9.2(26-03-17)
+!
+
+Load Profile Response:
+P.01(2603171048)(0000.51)
+P.01(2603171049)(0000.45)
+P.01(2603171050)(0000.54)
+!...</code></pre>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.8rem;">
+            <h3>5. Yük Profili Dosyaları</h3>
+            <p class="section-lead">
+              Simülatör, ürettiği yük profilini ve toplam endeksi disk üzerinde iki dosyada
+              saklar. Bu dosyalar, sayaç belleği gibi davranır ve uygulama yeniden başlasa bile
+              tüketim toplamının korunmasını sağlar.
+            </p>
+            <div class="grid grid-2">
+              <div>
+                <h4><code>meter_data.txt</code> (Yük Profili Kayıtları)</h4>
+                <p>Her satır bir interval için tüketimi temsil eder:</p>
+                <pre class="ascii-diagram"><code>P.01(2603171048)(0000.51)
+P.01(2603171049)(0000.45)
+P.01(2603171050)(0000.54)
+...</code></pre>
+                <p>
+                  Format: <code>P.01(YYMMDDhhmm)(vvvv.vv)</code> &rarr; verilen zaman diliminde
+                  tüketilen enerji (kWh).
+                </p>
+              </div>
+              <div>
+                <h4><code>meter_data_total_endex.txt</code> (Toplam Endeks)</h4>
+                <p>Son zaman damgası ve toplam tüketim bilgisini içerir:</p>
+                <pre class="ascii-diagram"><code>last_timestamp(2603171050)
+total_import(25.73)</code></pre>
+                <p>
+                  Uygulama başlatıldığında bu dosya okunur ve <code>1.8.0</code> OBIS değeri
+                  (toplam enerji) bu endekse göre ayarlanır. Böylece sayaç, gerçek bir cihaz gibi
+                  kaldığı yerden devam eder.
+                </p>
+              </div>
             </div>
           </div>
         </div>

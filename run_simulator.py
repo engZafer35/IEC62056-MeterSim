@@ -1,6 +1,7 @@
 import argparse
 import signal
 import sys
+import time
 from pathlib import Path
 
 from meter_model import MeterSimulator
@@ -61,19 +62,28 @@ def main() -> None:
         "3) P.01(YYMMDDhhmm)(YYMMDDhhmm)\\r\\n → yük profili cevabı"
     )
 
-    def handle_sig(sig, frame):
+    def shutdown():
         print("\nKapatılıyor...")
         server.stop()
         meter.stop()
+        print("Temiz kapandı.")
         sys.exit(0)
 
-    signal.signal(signal.SIGINT, handle_sig)
-    signal.signal(signal.SIGTERM, handle_sig)
+    def handle_sig(sig, frame):
+        shutdown()
 
-    # Basit sonsuz döngü; sinyal gelene kadar bekle
-    signal.pause()
+    # Signal handler (Windows'ta SIGTERM her zaman çalışmayabilir ama zararı yok)
+    signal.signal(signal.SIGINT, handle_sig)
+    if hasattr(signal, "SIGTERM"):
+        signal.signal(signal.SIGTERM, handle_sig)
+
+    # 🔥 Windows uyumlu bekleme
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        shutdown()
 
 
 if __name__ == "__main__":
     main()
-
