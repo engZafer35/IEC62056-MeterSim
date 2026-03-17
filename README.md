@@ -1,99 +1,99 @@
-# ⚡ IEC 62056 TCP Elektrik Sayacı Simülatörü
+# ⚡ IEC 62056 TCP Electricity Meter Simulator
 
-Python ile yazılmış, **IEC 62056-21** (eski adıyla IEC 1107) protokolüne benzeyen, **TCP üzerinden çalışan** bir elektrik sayacı simülatörüdür.  
-Gerçek ölçüm yapmaz; belirli periyotlarda (varsayılan **15 dk**) rastgele ama **pozitif ve tutarlı** tüketim üreterek hem:
+This is a Python-based, **IEC 62056-21** (formerly IEC 1107) inspired, **TCP-enabled** electricity meter simulator.  
+It does not perform real measurements; instead, at fixed intervals (default **15 minutes**) it generates random but **positive and consistent** energy consumption, and updates:
 
-- **Toplam tüketimi (OBIS 1.8.0)**,
-- **Anlık gücü (1.7.0)**,
-- **Gerilim değerini (32.7.0)**,
-- **Yük profilini (P.01 kayıtları)**  
+- **Total import energy (OBIS 1.8.0)**
+- **Instantaneous power (1.7.0)**
+- **Voltage (32.7.0)**
+- **Load profile (P.01 records)**  
 
-simüle eder ve bunları hem **TCP readout** olarak hem de **dosya** üzerinden sağlar.
+These values are exposed both via **TCP readout** and via **local data files**.
 
-> Bu repo, hem **gömülü cihaz geliştirenler** için bir test sayacı, hem de ileride eklenecek bir **UI için veri sağlayıcı backend** olarak tasarlanmıştır.
+> This repository is designed both as a test meter for **embedded developers** and as a **data‑provider backend** for a future UI.
 
 ---
 
-## 🛠 Özellikler
+## 🛠 Features
 
-- **Katmanlı mimari**:
-  - **Bağlantı katmanı**: TCP sunucu (`tcp_server.py`)
-  - **Protokol / mesaj yorumlama**: IEC 62056 benzeri state machine (`iec62056_protocol.py`)
-  - **Sayaç çekirdeği & yük profili**: Simülasyon ve veri dosyası yönetimi (`meter_model.py`)
-- **Short / default readout** desteği:
-  - `/?!` handshake → sayaç kimliği
-  - `ACK050` → tam OBIS readout
-- **Load profile (P.01)** sorgusu:
-  - `P.01(YYMMDDhhmm)(YYMMDDhhmm)` → belirtilen aralıktaki kayıtlar
-- **Yük profili dosyası**:
-  - Varsayılan: `meter_data.txt`
+- **Layered architecture**:
+  - **Transport layer**: TCP server (`tcp_server.py`)
+  - **Protocol / message parsing**: IEC 62056‑like state machine (`iec62056_protocol.py`)
+  - **Meter core & load profile**: Simulation and data file management (`meter_model.py`)
+- **Short / default readout** support:
+  - `/?!` handshake → meter identification
+  - `ACK050` → full OBIS readout
+- **Load profile (P.01)** query:
+  - `P.01(YYMMDDhhmm)(YYMMDDhhmm)` → returns all records in the given range
+- **Load profile data file**:
+  - Default file: `meter_data.txt`
   - Format: `P.01(YYMMDDhhmm)(vvvv.vv)`
-  - Uygulama her açılışta bu dosyadan **1.8.0 toplamını yeniden hesaplar** → yük profili ile tutarlı toplam tüketim.
-- **Kolay test için hızlandırılmış periyot**:
-  - Gerçekte 15 dk, testte örn. 10 sn olarak ayarlanabilir.
+  - On startup the application **rebuilds OBIS 1.8.0** from this file, so the total energy is always consistent with the accumulated load profile.
+- **Faster test cycles**:
+  - Real‑life interval is 15 minutes, but for testing you can use e.g. 10 seconds.
 
-- **🖥 TCP Client Uygulaması**:
-  - TCP üzerinden bağlanma ve sorgulama
-  - Host ve port parametreleri CLI ile ayarlanabilir
-  - Timeout ve hata yönetimi ile güvenli bağlantı
-  - OBIS readout
-  - /?! → Sayaç kimliği alımı
-  - ACK050 → Short/Full readout alma
-  - Load profile (P.01) sorgusu
-  - Başlangıç ve bitiş zaman aralığı ile veri çekme
-  - Büyük veri desteği (buffer ≥ 4 KB)
-  - **Parametreler**
+- **🖥 TCP Client application** (`Meter_Client_Test.py`):
+  - Connects over TCP and performs protocol requests
+  - Host and port are configurable via CLI
+  - Safe connection with timeout and basic error handling
+  - OBIS readout:
+    - `/?!` → get meter ID
+    - `ACK050` → receive short/full readout
+  - Load profile (P.01) query:
+    - Fetch data for a given start/end time range
+    - Supports larger responses (buffer ≥ 4 KB)
+  - **Arguments**
     ```text
-    --host, --port → Hedef sunucu
-    --interval → Sorgulama periyodu (saniye cinsinden)
-    --start, --end → Load profile zaman aralığı
+    --host, --port   → target server
+    --interval       → query interval in seconds
+    --start, --end   → load profile time window
     ```
-    **Sürekli takip**
-    - Belirlenen interval ile otomatik sorgulama
-    - Ctrl+C ile güvenli durdurma
+  - **Continuous monitoring**
+    - Automatically re‑queries at the given interval
+    - Can be stopped safely with Ctrl+C
 ---
 
-## ⚙ Kurulum
+## ⚙ Installation
 
-### 📦 Gereksinimler
+### 📦 Requirements
 
-- Python **3.9+** (3.10 veya üzeri tavsiye edilir)
-- Windows, Linux veya macOS (örnekler Windows/PowerShell ile verilmiştir)
+- Python **3.9+** (3.10 or newer recommended)
+- Windows, Linux or macOS (examples below use Windows/PowerShell)
 
-### 🚀 Çalıştırma
+### 🚀 Running
 
-Projeyi klonladıktan sonra klasöre girin:
+After cloning the project, go into the folder:
 
 ```bash
 cd ElectricityMeter
 ```
 
-Basit bir şekilde simülatörü başlatmak için:
+To start the simulator with default settings:
 
 ```bash
 python run_simulator.py
 ```
 
-Varsayılan ayarlar:
+Default configuration:
 
 - Host: `0.0.0.0`
 - Port: `5000`
-- Yük profili dosyası: `meter_data.txt`
-- Periyot: `900` sn (**15 dk**)
+- Load profile file: `meter_data.txt`
+- Interval: `900` seconds (**15 minutes**)
 
-Test için periyodu hızlandırmak isterseniz (örneğin her 10 sn’de bir yeni kayıt):
+For testing you may speed up the interval (e.g. create a new record every 10 seconds):
 
 ```bash
 python run_simulator.py --interval-seconds 10
 ```
 
-Özel port ve data dosyası örneği:
+Custom host/port and data file example:
 
 ```bash
 python run_simulator.py --host 127.0.0.1 --port 5000 --data-file data\my_meter.txt
 ```
 
-Client ile bağlanmak ve verileri çekmek için:
+To connect with the TCP client and fetch data:
 
 ```bash
 python client.py --host 127.0.0.1 --port 5000 --interval 10
@@ -101,46 +101,46 @@ python client.py --host 127.0.0.1 --port 5000 --interval 10
 
 ---
 
-## 🧩Nasıl Çalışıyor? (Adım Adım)
+## 🧩 How It Works (Step by Step)
 
-### 1️⃣ Sayaç çekirdeği (MeterSimulator)
+### 1️⃣ Meter core (`MeterSimulator`)
 
-`meter_model.py` içindeki `MeterSimulator` sınıfı:
+The `MeterSimulator` class in `meter_model.py`:
 
-- Arka planda çalışan bir **thread** başlatır.
-- Her periyotta (örn. 15 dk / 10 sn):
-  - 0.1–0.6 kWh arası **rasgele pozitif tüketim** üretir.
-  - Bu interval için ortalama güçten yola çıkarak **anlık güç (1.7.0)** değeri üretir.
-  - 230 V civarında küçük bir oynama ile **gerilim (32.7.0)** üretir.
-  - Bu tüketimi:
-    - **Yük profiline (P.01 satırı)** ekler.
-    - **Toplam tüketim 1.8.0** değerine ekler.
-  - Yük profilini şu formatta dosyaya yazar:
+- Starts a background **thread**.
+- On each interval (e.g. 15 minutes / 10 seconds in tests):
+  - Generates **random positive consumption** in the range 0.1–0.6 kWh.
+  - From this interval energy, computes an average power and sets **instant power (1.7.0)** around that value.
+  - Generates **voltage (32.7.0)** around 230 V with a small random variation.
+  - For each interval:
+    - Appends a **load profile record (P.01 line)**.
+    - Adds to **total import 1.8.0**.
+  - Writes the load profile in the following format:
 
 ```text
 P.01(YYMMDDhhmm)(vvvv.vv)
-Ör: P.01(2401010000)(0000.42)
+Example: `P.01(2401010000)(0000.42)`
 ```
 
-- Uygulama her açıldığında:
-  - `meter_data.txt` dosyasını okur,
-  - Tüm satırlardaki tüketimleri toplayarak **1.8.0 toplamını yeniden hesaplar**.
+- On startup:
+  - Reads `meter_data.txt`,
+  - Sums all energy values to recompute **OBIS 1.8.0 total import**.
 
-### 2️⃣ Protokol akışı (IEC 62056 benzeri)
+### 2️⃣ Protocol flow (IEC 62056‑like)
 
-`iec62056_protocol.py` içindeki `ConnectionState`:
+The `ConnectionState` class in `iec62056_protocol.py` handles the basic IEC 62056‑21 style flow:
 
 1. **Handshake**:
-   - Client şu mesajı gönderir:
+   - Client sends:
      - `/?!` + CRLF
-   - Sayaç şu cevabı verir:
+   - Meter responds with:
      - `/ZD5ME666-1003` + CRLF
 
-2. **Baudrate seçimi (ACK050)**:
-   - Client:
+2. **Baudrate selection (ACK050)**:
+   - Client sends:
      - `ACK050` + CRLF
-   - TCP kullandığımız için baudrate fiziksel olarak değişmez ama **protokol gereği kabul edilir**.
-   - Aynı anda sayaç **short/default readout** paketini gönderir:
+   - Because this is TCP, the physical baudrate is not changed, but the command is **accepted for protocol compatibility**.
+   - The meter immediately sends a **short/default readout**:
 
 ```text
 0.0.0(12345678)
@@ -153,15 +153,15 @@ P.01(YYMMDDhhmm)(vvvv.vv)
 !
 ```
 
-3. **Load profile sorgusu (P.01)**:
-   - Client, başlangıç ve bitiş tarihini şöyle gönderir:
+3. **Load profile query (P.01)**:
+   - Client sends the start and end timestamps:
 
 ```text
 P.01(YYMMDDhhmm)(YYMMDDhhmm)
-Ör: P.01(2401010000)(2401012359)
+Example: `P.01(2401010000)(2401012359)`
 ```
 
-   - Sayaç, istenen aralıktaki tüm kayıtları şu formatta döner:
+   - The meter returns all records in the given range:
 
 ```text
 P.01(2401010000)(0000.42)
@@ -170,32 +170,32 @@ P.01(2401010015)(0000.38)
 !
 ```
 
-Bu yapı sayesinde:
+This design ensures that:
 
-- **Toplam tüketim (1.8.0)** ≈ **Günlük/haftalık yük profilinin toplamı** olacak şekilde tutarlı bir simülasyon sağlanır.
+- **Total import (1.8.0)** ≈ **Sum of daily/weekly load profile** over time, giving a consistent simulation.
 
-### 3️⃣ TCP Sunucu
+### 3️⃣ TCP server
 
-`tcp_server.py` içindeki `MeterTCPServer`:
+The `MeterTCPServer` class in `tcp_server.py`:
 
-- Sayaç cihazı gibi davranıp **bağlantıyı kendisi açar**:
+- Acts like a meter device and **opens the TCP listening socket itself**:
   - `bind(host, port)` + `listen()`
-- Her yeni client için ayrı bir thread oluşturur.
-- Gelen baytları ASCII’ye çevirir, **satır bazında** `ConnectionState`’e iletir:
-  - Satır ayracı olarak **CRLF** (veya sadece LF) kabul edilir.
-- `ConnectionState.handle_line()` bir cevap üretirse (string), bunu client’a geri yollar.
+- Spawns a dedicated thread for each new client.
+- Converts incoming bytes to ASCII and sends them **line by line** into `ConnectionState`:
+  - Uses **CRLF** (or LF) as line terminator.
+- If `ConnectionState.handle_line()` returns a response string, it is sent back to the client.
 
 ---
 
-## Örnek Terminal Oturumu
+## Example terminal session
 
-Simülatör arka planda şu şekilde çalışıyor olsun:
+Assume the simulator is running in the background:
 
 ```bash
 python run_simulator.py --host 127.0.0.1 --port 5000 --interval-seconds 10
 ```
 
-Başka bir terminalden basit bir TCP client (örneğin `telnet`) ile bağlanabilirsiniz:
+From another terminal you can connect using a simple TCP client (e.g. `telnet`):
 
 ```bash
 telnet 127.0.0.1 5000
@@ -208,7 +208,7 @@ Client:  /?!
 Meter :  /ISK5ME382-1003
 ```
 
-2. **ACK + Short Readout**:
+2. **ACK + Short readout**:
 
 ```text
 Client:  ACK050
@@ -223,7 +223,7 @@ Meter :
  !
 ```
 
-3. **Load Profile Sorgusu** (örnek tarih aralığı):
+3. **Load profile query** (example date range):
 
 ```text
 Client:  P.01(2401010000)(2401012359)
@@ -234,18 +234,18 @@ Meter :
  !
 ```
 
-> Not: Gerçek çıktılar, simülasyon süresine ve rastgele üretilen tüketime göre değişecektir.
+> Note: Actual output will depend on runtime and randomly generated consumption.
 
 ---
-## 🔗 Client + Server Etkileşimi
+## 🔗 Client–Server interaction
 <img width="325" height="550" alt="image" src="https://github.com/user-attachments/assets/1bffdaa9-d343-4b75-95c4-25080fb55ed4" />
 
 <img width="315" height="478" alt="image" src="https://github.com/user-attachments/assets/4aa3a94b-c415-4fce-b25d-abe4391a66ac" />
 
 
-## Text Bazlı Basit Günlük Tüketim Grafiği
+## Simple text‑based daily consumption chart
 
-Aşağıdaki, 15 dk aralıklarla yaklaşık **12.34 kWh** toplam tüketime sahip örnek bir günün text tabanlı grafiğidir:
+The following is a text‑based chart for an example day with **~12.34 kWh** total energy (15‑minute intervals):
 
 ```text
 Saat   Tüketim (kWh)   Grafik
@@ -258,32 +258,32 @@ Saat   Tüketim (kWh)   Grafik
 ...
 23:45      0.41        ###############
 
-Toplam ≈ 12.34 kWh  (OBIS 1.8.0 ≈ 12.34 kWh)
+Total ≈ 12.34 kWh  (OBIS 1.8.0 ≈ 12.34 kWh)
 ```
 
-Bu fikir, ileride eklenecek bir **GUI / web arayüzünde** günlük/haftalık grafikler çizmek için temel oluşturur.
+This idea can later be turned into real daily/weekly charts in a **GUI or web dashboard**.
 
 ---
 
-## 💡Genişletme Fikirleri
+## 💡 Ideas for extension
 
-- **Yeni OBIS kodları** (ör: akım, güç faktörü, faz bazlı ölçümler)
-- **Seçilebilir profil setleri**:
-  - Ev tipi tüketici
-  - Sanayi aboneliği
-  - Güneş paneli ile üretim senaryosu (2.8.0 kullanılarak)
-- **Gerçek TCP/seri köprü**:
-  - TCP → Seri port → Gerçek sayaç yönünde proxy
-- **UI entegrasyonu**:
-  - Tkinter / PyQt / web tabanlı dashboard ile:
-    - Anlık güç, gerilim, toplam tüketim,
-    - Yük profili grafikleri,
-    - Basit alarm/limit uyarıları.
+- **New OBIS codes** (e.g. current, power factor, per‑phase measurements)
+- **Selectable profile sets**:
+  - Residential consumer
+  - Industrial tariff
+  - PV / solar production scenario (using 2.8.0 for export)
+- **Real TCP/serial bridge**:
+  - TCP → Serial port → real physical meter (proxy)
+- **UI integration**:
+  - Tkinter / PyQt / web‑based dashboard:
+    - Instant power, voltage, total energy
+    - Load profile charts
+    - Simple alarm/limit notifications
 
 ---
 
-## Katkı ve Lisans
+## Contributing and license
 
-Bu repo, test ve eğitim amaçlı bir simülatördür.  
-Pull request, yeni OBIS desteği ve iyileştirme önerilerine açıktır.
+This repository is a simulator for testing and educational purposes.  
+Pull requests, new OBIS support and improvement ideas are very welcome.
 
