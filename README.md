@@ -26,9 +26,9 @@ These values are exposed both via **TCP readout** and via **local data files**.
 - **Load profile (P.01)** query:
   - `P.01(YYMMDDhhmm)(YYMMDDhhmm)` → returns all records in the given range
 - **Load profile data file**:
-  - Default file: `meter_data.txt`
-  - Format: `P.01(YYMMDDhhmm)(vvvv.vv)`
-  - On startup the application **rebuilds OBIS 1.8.0** from this file, so the total energy is always consistent with the accumulated load profile.
+  - Default file: `meter_data.txt` — one line per interval in 6-field format (date, time, total energy, voltage, current, power factor).
+  - Snapshot file: `meter_data_total_endex.txt` — contains last timestamp and total import; **content is derived from the total energy field** of the last record (or written on shutdown).
+  - On startup the application loads state from the **last line** of `meter_data.txt` (or from the snapshot file), so OBIS 1.8.0 stays consistent with the load profile.
 - **Faster test cycles**:
   - Real‑life interval is 15 minutes, but for testing you can use e.g. 10 seconds.
 
@@ -96,7 +96,7 @@ python run_simulator.py --host 127.0.0.1 --port 5000 --data-file data\my_meter.t
 To connect with the TCP client and fetch data:
 
 ```bash
-python client.py --host 127.0.0.1 --port 5000 --interval 10
+python Meter_Client_Test.py --host 127.0.0.1 --port 5000 --interval 10
 ```
 
 ---
@@ -113,18 +113,26 @@ The `MeterSimulator` class in `meter_model.py`:
   - From this interval energy, computes an average power and sets **instant power (1.7.0)** around that value.
   - Generates **voltage (32.7.0)** around 230 V with a small random variation.
   - For each interval:
-    - Appends a **load profile record (P.01 line)**.
-    - Adds to **total import 1.8.0**.
-  - Writes the load profile in the following format:
+    - Computes **voltage** (≈210–240 V), **power factor** (≈0.85–1.0), and **current** from power (I = P/(V×PF)).
+    - Appends a **load profile record** with cumulative total energy, voltage, current, and power factor.
+    - Adds the interval consumption to **total import 1.8.0**.
+  - Writes each record in **6-field format**:
 
 ```text
-P.01(YYMMDDhhmm)(vvvv.vv)
-Example: `P.01(2401010000)(0000.42)`
+(YYYY-MM-DD)(HH:MM)(000000.000*kWh)(229*V)(000.0*A)(1.00)
 ```
 
+  | Field | Meaning |
+  |-------|--------|
+  | 1 | Date (YYYY-MM-DD) |
+  | 2 | Time (HH:MM) |
+  | 3 | Total energy consumption (kWh, cumulative) |
+  | 4 | Single-phase voltage (V) |
+  | 5 | Single-phase current (A) |
+  | 6 | Power factor |
+
 - On startup:
-  - Reads `meter_data.txt`,
-  - Sums all energy values to recompute **OBIS 1.8.0 total import**.
+  - Reads the **last line** of `meter_data.txt` (or `meter_data_total_endex.txt` if the data file is missing) to set **OBIS 1.8.0 total import** and last timestamp.
 
 ### 2️⃣ Protocol flow (IEC 62056‑like)
 
@@ -161,11 +169,11 @@ P.01(YYMMDDhhmm)(YYMMDDhhmm)
 Example: `P.01(2401010000)(2401012359)`
 ```
 
-   - The meter returns all records in the given range:
+   - The meter returns all records in the given range (same 6-field format as the data file), or **No-Data** + `!` when the range is empty or invalid (e.g. start &gt; end):
 
 ```text
-P.01(2401010000)(0000.42)
-P.01(2401010015)(0000.38)
+(2026-03-17)(14:10)(000030.960*kWh)(230*V)(008.5*A)(0.92)
+(2026-03-17)(14:25)(000031.520*kWh)(228*V)(007.2*A)(0.89)
 ...
 !
 ```
@@ -228,10 +236,17 @@ Meter :
 ```text
 Client:  P.01(2401010000)(2401012359)
 Meter :
- P.01(2401010000)(0000.42)
- P.01(2401010015)(0000.38)
+ (2026-01-01)(00:00)(000012.340*kWh)(229*V)(005.2*A)(0.91)
+ (2026-01-01)(00:15)(000012.720*kWh)(231*V)(004.8*A)(0.93)
  ...
  !
+```
+
+If the requested range has no data (e.g. future date) or start &gt; end, the meter responds with:
+
+```text
+No-Data
+!
 ```
 
 > Note: Actual output will depend on runtime and randomly generated consumption.
