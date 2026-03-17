@@ -1,4 +1,4 @@
-# IEC 62056 TCP Elektrik Sayacı Simülatörü
+# ⚡ IEC 62056 TCP Elektrik Sayacı Simülatörü
 
 Python ile yazılmış, **IEC 62056-21** (eski adıyla IEC 1107) protokolüne benzeyen, **TCP üzerinden çalışan** bir elektrik sayacı simülatörüdür.  
 Gerçek ölçüm yapmaz; belirli periyotlarda (varsayılan **15 dk**) rastgele ama **pozitif ve tutarlı** tüketim üreterek hem:
@@ -14,7 +14,7 @@ simüle eder ve bunları hem **TCP readout** olarak hem de **dosya** üzerinden 
 
 ---
 
-## Özellikler
+## 🛠 Özellikler
 
 - **Katmanlı mimari**:
   - **Bağlantı katmanı**: TCP sunucu (`tcp_server.py`)
@@ -32,16 +32,35 @@ simüle eder ve bunları hem **TCP readout** olarak hem de **dosya** üzerinden 
 - **Kolay test için hızlandırılmış periyot**:
   - Gerçekte 15 dk, testte örn. 10 sn olarak ayarlanabilir.
 
+- **🖥 TCP Client Uygulaması**:
+  - TCP üzerinden bağlanma ve sorgulama
+  - Host ve port parametreleri CLI ile ayarlanabilir
+  - Timeout ve hata yönetimi ile güvenli bağlantı
+  - OBIS readout
+  - /?! → Sayaç kimliği alımı
+  - ACK050 → Short/Full readout alma
+  - Load profile (P.01) sorgusu
+  - Başlangıç ve bitiş zaman aralığı ile veri çekme
+  - Büyük veri desteği (buffer ≥ 4 KB)
+  - **Parametreler**
+    ```text
+    --host, --port → Hedef sunucu
+    --interval → Sorgulama periyodu (saniye cinsinden)
+    --start, --end → Load profile zaman aralığı
+    ```
+    **Sürekli takip**
+    - Belirlenen interval ile otomatik sorgulama
+    - Ctrl+C ile güvenli durdurma
 ---
 
-## Kurulum
+## ⚙ Kurulum
 
-### Gereksinimler
+### 📦 Gereksinimler
 
 - Python **3.9+** (3.10 veya üzeri tavsiye edilir)
 - Windows, Linux veya macOS (örnekler Windows/PowerShell ile verilmiştir)
 
-### Çalıştırma
+### 🚀 Çalıştırma
 
 Projeyi klonladıktan sonra klasöre girin:
 
@@ -71,14 +90,20 @@ python run_simulator.py --interval-seconds 10
 Özel port ve data dosyası örneği:
 
 ```bash
-python run_simulator.py --host 127.0.0.1 --port 6000 --data-file data\my_meter.txt
+python run_simulator.py --host 127.0.0.1 --port 5000 --data-file data\my_meter.txt
+```
+
+Client ile bağlanmak ve verileri çekmek için:
+
+```bash
+python client.py --host 127.0.0.1 --port 5000 --interval 10
 ```
 
 ---
 
-## Nasıl Çalışıyor? (Adım Adım)
+## 🧩Nasıl Çalışıyor? (Adım Adım)
 
-### 1. Sayaç çekirdeği (MeterSimulator)
+### 1️⃣ Sayaç çekirdeği (MeterSimulator)
 
 `meter_model.py` içindeki `MeterSimulator` sınıfı:
 
@@ -101,7 +126,7 @@ P.01(YYMMDDhhmm)(vvvv.vv)
   - `meter_data.txt` dosyasını okur,
   - Tüm satırlardaki tüketimleri toplayarak **1.8.0 toplamını yeniden hesaplar**.
 
-### 2. Protokol akışı (IEC 62056 benzeri)
+### 2️⃣ Protokol akışı (IEC 62056 benzeri)
 
 `iec62056_protocol.py` içindeki `ConnectionState`:
 
@@ -149,7 +174,7 @@ Bu yapı sayesinde:
 
 - **Toplam tüketim (1.8.0)** ≈ **Günlük/haftalık yük profilinin toplamı** olacak şekilde tutarlı bir simülasyon sağlanır.
 
-### 3. TCP Sunucu
+### 3️⃣ TCP Sunucu
 
 `tcp_server.py` içindeki `MeterTCPServer`:
 
@@ -212,6 +237,11 @@ Meter :
 > Not: Gerçek çıktılar, simülasyon süresine ve rastgele üretilen tüketime göre değişecektir.
 
 ---
+## 🔗 Client + Server Etkileşimi
+<img width="325" height="550" alt="image" src="https://github.com/user-attachments/assets/1bffdaa9-d343-4b75-95c4-25080fb55ed4" />
+
+<img width="315" height="478" alt="image" src="https://github.com/user-attachments/assets/4aa3a94b-c415-4fce-b25d-abe4391a66ac" />
+
 
 ## Text Bazlı Basit Günlük Tüketim Grafiği
 
@@ -235,7 +265,7 @@ Bu fikir, ileride eklenecek bir **GUI / web arayüzünde** günlük/haftalık gr
 
 ---
 
-## Genişletme Fikirleri
+## 💡Genişletme Fikirleri
 
 - **Yeni OBIS kodları** (ör: akım, güç faktörü, faz bazlı ölçümler)
 - **Seçilebilir profil setleri**:
