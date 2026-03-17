@@ -87,10 +87,10 @@ For testing you may speed up the interval (e.g. create a new record every 10 sec
 python run_simulator.py --interval-seconds 10
 ```
 
-Custom host/port and data file example:
+Custom host/port and meterID example:
 
 ```bash
-python run_simulator.py --host 127.0.0.1 --port 5000 --data-file data\my_meter.txt
+python run_simulator.py --host 127.0.0.1 --port 5000 --meter-id ZD5ME666-667
 ```
 
 To connect with the TCP client and fetch data:
