@@ -1,17 +1,22 @@
+import re
 import threading
 import random
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 LOAD_PROFILE_INTERVAL_MINUTES = 15
 
 
 @dataclass
 class LoadProfileEntry:
+    """One load profile record: date, time, total energy, voltage, current, power factor."""
     timestamp: datetime
-    consumption_kwh: float
+    total_energy_kwh: float   # cumulative total at this moment
+    voltage_v: float
+    current_a: float
+    power_factor: float
 
 
 @dataclass
@@ -85,12 +90,12 @@ class MeterSimulator:
             with self.data_file.open("r", encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
-                    if not line.startswith("P.01("):
+                    if not line.startswith("("):
                         continue
                     try:
-                        ts, cons = self._parse_profile_line(line)
-                        if start <= ts <= end:
-                            results.append(LoadProfileEntry(ts, cons))
+                        entry = self._parse_profile_line(line)
+                        if entry and start <= entry.timestamp <= end:
+                            results.append(entry)
                     except ValueError:
                         continue
         except OSError:
@@ -109,26 +114,42 @@ class MeterSimulator:
         duration_hours = LOAD_PROFILE_INTERVAL_MINUTES / 60.0
         avg_power_kw = consumption / duration_hours
 
-        instant_power = max(0.0, random.gauss(avg_power_kw, avg_power_kw * 0.1))
-        voltage = random.gauss(230.0, 2.0)
-
-        entry = LoadProfileEntry(timestamp=now, consumption_kwh=consumption)
+        voltage = random.gauss(230.0, 5.0)
+        voltage = max(210.0, min(240.0, voltage))
+        power_factor = random.uniform(0.85, 1.0)
+        # I = P / (V * PF), P in kW -> I in A: I = (P * 1000) / (V * PF)
+        current_a = (avg_power_kw * 1000.0) / (voltage * power_factor) if (voltage * power_factor) > 0 else 0.0
+        current_a = max(0.0, min(999.9, current_a))
 
         with self._lock:
-            self.state.last_interval = entry
             self.state.total_import_kwh += consumption
-            self.state.instant_power_kw = instant_power
+            self.state.instant_power_kw = max(0.0, random.gauss(avg_power_kw, avg_power_kw * 0.1))
             self.state.voltage_v = voltage
+
+            entry = LoadProfileEntry(
+                timestamp=now,
+                total_energy_kwh=self.state.total_import_kwh,
+                voltage_v=voltage,
+                current_a=current_a,
+                power_factor=power_factor,
+            )
+            self.state.last_interval = entry
             self._append_entry_to_file(entry)
 
     def _append_entry_to_file(self, entry: LoadProfileEntry) -> None:
-        ts_str = entry.timestamp.strftime("%y%m%d%H%M")
-        cons_str = f"{entry.consumption_kwh:07.2f}"
-        line = f"P.01({ts_str})({cons_str})\n"
+        # Format: (YYYY-MM-DD)(HH:MM)(000000.000*kWh)(229*V)(000.0*A)(1.00)
+        date_str = entry.timestamp.strftime("%Y-%m-%d")
+        time_str = entry.timestamp.strftime("%H:%M")
+        total_str = f"{entry.total_energy_kwh:011.3f}*kWh"
+        voltage_str = f"{int(round(entry.voltage_v))}*V"
+        current_str = f"{entry.current_a:05.1f}*A"
+        pf_str = f"{entry.power_factor:.2f}"
+        line = f"({date_str})({time_str})({total_str})({voltage_str})({current_str})({pf_str})\n"
 
         self.data_file.parent.mkdir(parents=True, exist_ok=True)
         with self.data_file.open("a", encoding="utf-8") as f:
             f.write(line)
+        self._save_snapshot()
 
     # ---------- snapshot methods ----------
 
@@ -138,9 +159,22 @@ class MeterSimulator:
         - total_import_kwh ve son timestamp alınır
         - RAM’de sadece son interval tutulur
         """
+        last_entry = None
+        if self.data_file.exists():
+            try:
+                with self.data_file.open("r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line.startswith("("):
+                            last_entry = self._parse_profile_line(line)
+            except (OSError, ValueError):
+                pass
+        if last_entry is not None:
+            self.state.total_import_kwh = last_entry.total_energy_kwh
+            self.state.last_interval = last_entry
+            return
         if not self.snapshot_file.exists():
             return
-
         try:
             with self.snapshot_file.open("r", encoding="utf-8") as f:
                 for line in f:
@@ -151,7 +185,10 @@ class MeterSimulator:
                     elif line.startswith("last_timestamp("):
                         ts_str = line[len("last_timestamp("):-1]
                         ts = datetime.strptime(ts_str, "%y%m%d%H%M")
-                        self.state.last_interval = LoadProfileEntry(timestamp=ts, consumption_kwh=0.0)
+                        self.state.last_interval = LoadProfileEntry(
+                            timestamp=ts, total_energy_kwh=self.state.total_import_kwh,
+                            voltage_v=230.0, current_a=0.0, power_factor=1.0
+                        )
         except OSError:
             return
 
@@ -166,20 +203,21 @@ class MeterSimulator:
             f.write(f"total_import({self.state.total_import_kwh:.2f})\n")
 
     @staticmethod
-    def _parse_profile_line(line: str) -> Tuple[datetime, float]:
+    def _parse_profile_line(line: str) -> Optional[LoadProfileEntry]:
         """
-        Parse "P.01(YYMMDDhhmm)(vvvv.vv)" into (datetime, float)
+        Parse "(YYYY-MM-DD)(HH:MM)(total*kWh)(V*V)(I*A)(PF)" into LoadProfileEntry.
         """
-        first_open = line.find("(")
-        first_close = line.find(")", first_open + 1)
-        second_open = line.find("(", first_close + 1)
-        second_close = line.find(")", second_open + 1)
-        if min(first_open, first_close, second_open, second_close) == -1:
+        # Extract six (...) groups
+        parts = re.findall(r"\(([^)]*)\)", line)
+        if len(parts) < 6:
             raise ValueError("Malformed load profile line")
-
-        ts_str = line[first_open + 1:first_close]
-        cons_str = line[second_open + 1:second_close]
-
-        ts = datetime.strptime(ts_str, "%y%m%d%H%M")
-        consumption = float(cons_str)
-        return ts, consumption
+        date_str, time_str, total_str, voltage_str, current_str, pf_str = parts[:6]
+        ts = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+        total = float(total_str.replace("*kWh", ""))
+        voltage = float(voltage_str.replace("*V", ""))
+        current = float(current_str.replace("*A", ""))
+        power_factor = float(pf_str)
+        return LoadProfileEntry(
+            timestamp=ts, total_energy_kwh=total,
+            voltage_v=voltage, current_a=current, power_factor=power_factor
+        )

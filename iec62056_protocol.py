@@ -76,18 +76,26 @@ class ConnectionState:
             # Malformed request
             return None
 
-        if end_dt < start_dt:
-            start_dt, end_dt = end_dt, start_dt
+        if start_dt > end_dt:
+            return "No-Data" + CRLF + "!" + CRLF
 
         entries: List[LoadProfileEntry] = self.meter.get_load_profile_between(
             start=start_dt, end=end_dt
         )
 
+        if not entries:
+            return "No-Data" + CRLF + "!" + CRLF
+
+        # Response format: (YYYY-MM-DD)(HH:MM)(total*kWh)(V*V)(I*A)(PF)
         lines: List[str] = []
         for e in entries:
-            ts_str = e.timestamp.strftime("%y%m%d%H%M")
-            cons_str = f"{e.consumption_kwh:07.2f}"
-            lines.append(f"P.01({ts_str})({cons_str})")
+            date_str = e.timestamp.strftime("%Y-%m-%d")
+            time_str = e.timestamp.strftime("%H:%M")
+            total_str = f"{e.total_energy_kwh:011.3f}*kWh"
+            voltage_str = f"{int(round(e.voltage_v))}*V"
+            current_str = f"{e.current_a:05.1f}*A"
+            pf_str = f"{e.power_factor:.2f}"
+            lines.append(f"({date_str})({time_str})({total_str})({voltage_str})({current_str})({pf_str})")
         lines.append("!")
 
         return CRLF.join(lines) + CRLF
