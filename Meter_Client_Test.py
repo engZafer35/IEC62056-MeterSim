@@ -79,12 +79,13 @@ def main():
     print("Starting TCP client...")
     print(f"Target: {args.host}:{args.port}")
     print(f"Interval: {args.interval} sec")
-    print(f"Load profile range: {args.start} - {args.end}")
+    print(f"Load profile start: {args.start} (end = current time on each query)")
 
     try:
         while True:
             print("\n--- New Query ---")
-            query_meter(args.host, args.port, args.start, args.end)
+            end = datetime.now().strftime("%y%m%d%H%M")
+            query_meter(args.host, args.port, args.start, end)
             time.sleep(args.interval)
 
     except KeyboardInterrupt:
