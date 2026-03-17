@@ -42,6 +42,23 @@ def parse_args():
     return parser.parse_args()
 
 
+def recv_until_marker(sock, end_marker="!\r\n", chunk_size=1024, timeout=10):
+    """Receive data in chunks until end_marker is seen (e.g. load profile terminator)."""
+    sock.settimeout(timeout)
+    buf = ""
+    while True:
+        try:
+            chunk = sock.recv(chunk_size)
+        except socket.timeout:
+            break
+        if not chunk:
+            break
+        buf += chunk.decode("ascii", errors="ignore")
+        if end_marker in buf:
+            break
+    return buf
+
+
 def query_meter(host, port, start, end):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -58,12 +75,12 @@ def query_meter(host, port, start, end):
             print("ACK Response:")
             print(s.recv(1024).decode())
 
-            # 3. Load profile
+            # 3. Load profile – receive in chunks until "!\r\n" (end of response)
             request = f"P.01({start})({end})\r\n".encode()
             s.sendall(request)
 
             print("Load Profile Response:")
-            print(s.recv(4096).decode())
+            print(recv_until_marker(s, end_marker="!\r\n", chunk_size=1024))
 
     except Exception as e:
         print(f"Connection error: {e}")

@@ -74,7 +74,10 @@ class MeterTCPServer:
                     response = conn_state.handle_line(line)
                     if response:
                         try:
-                            client_sock.sendall(response.encode("ascii"))
+                            data = response.encode("ascii")
+                            chunk_size = 1024
+                            for i in range(0, len(data), chunk_size):
+                                client_sock.send(data[i : i + chunk_size])
                         except OSError:
                             return
 
