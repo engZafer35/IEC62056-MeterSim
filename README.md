@@ -98,8 +98,10 @@ To connect with the TCP client and fetch data:
 ```bash
 python Meter_Client_Test.py --host 127.0.0.1 --port 5000 --interval 10
 ```
+<p align="center">
+  <img src=https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWRyaHB0dWd6enN3c21iZHB4MnBjdnlzMnBmYXF5dm9ka2xoeDB0YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3d0PahT093UPe/giphy.gif>
+</p>
 
----
 
 ## 🧩 How It Works (Step by Step)
 
@@ -301,4 +303,7 @@ This idea can later be turned into real daily/weekly charts in a **GUI or web da
 
 This repository is a simulator for testing and educational purposes.  
 Pull requests, new OBIS support and improvement ideas are very welcome.
+<p align="center">
+  <img src=https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2FhaGw3cWw3Ymx1ZTl2M2E4dTJndjN2ZGlneDdqZ25rbWo1bHliYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Uahz9hecgXoJi/giphy.gif>
+</p>
 
