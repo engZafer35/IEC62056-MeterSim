@@ -14,8 +14,8 @@ def parse_args():
     )
     parser.add_argument(
         "--host",
-        default="0.0.0.0",
-        help="Dinlenecek IP adresi (varsayılan: 0.0.0.0)",
+        default="127.0.0.1",
+        help="Dinlenecek IP adresi (varsayılan: 127.0.0.1)",
     )
     parser.add_argument(
         "--port",
