@@ -77,6 +77,7 @@ def query_meter(host, port, start, end):
 
             # 3. Load profile – receive in chunks until "!\r\n" (end of response)
             request = f"P.01({start})({end})\r\n".encode()
+            print(f"Sending load profile request: {request.decode().strip()}")
             s.sendall(request)
 
             print("Load Profile Response:")

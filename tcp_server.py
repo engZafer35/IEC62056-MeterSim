@@ -1,5 +1,6 @@
 import socket
 import threading
+from time import sleep
 from typing import Tuple
 
 from meter_model import MeterSimulator
@@ -45,6 +46,7 @@ class MeterTCPServer:
         while not self._stop_event.is_set():
             try:
                 client_sock, addr = self._sock.accept()
+                print(f"\033[91mClient connected: IP {addr[0]}, Socket {client_sock.fileno()}\033[0m")
             except OSError:
                 break
             t = threading.Thread(
@@ -80,6 +82,7 @@ class MeterTCPServer:
                             chunk_size = 1024
                             for i in range(0, len(data), chunk_size):
                                 client_sock.send(data[i : i + chunk_size])
+                                sleep(0.5)  # Small delay to avoid overwhelming the client
                         except OSError:
                             return
 
