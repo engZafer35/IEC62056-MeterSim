@@ -98,6 +98,40 @@ To connect with the TCP client and fetch data:
 ```bash
 python Meter_Client_Test.py --host 127.0.0.1 --port 5000 --interval 10
 ```
+
+## 🧱 Windows için derleme
+
+Python kodunu tek bir çalıştırılabilir dosyaya dönüştürmek için `build_windows_exe.ps1` eklendi.
+
+```powershell
+cd c:\Users\zafer\OneDrive\Desktop\ElectricityMeter\IEC62056-MeterSim
+.\build_windows_exe.ps1 -Mode nuitka
+```
+
+Alternatif olarak `pyinstaller` kullanmak isterseniz:
+
+```powershell
+.\build_windows_exe.ps1 -Mode pyinstaller
+```
+
+## 🧱 Linux için derleme
+
+Linux üzerinde çalıştırılabilir bir paket oluşturmak için `build_linux_exe.sh` eklendi.
+
+```bash
+cd /path/to/ElectricityMeter/IEC62056-MeterSim
+chmod +x ./build_linux_exe.sh
+./build_linux_exe.sh nuitka
+```
+
+PyInstaller kullanmak için:
+
+```bash
+./build_linux_exe.sh pyinstaller
+```
+
+> Not: Python uygulamalarını bağımsız bir çalıştırılabilir hale getirmek mümkündür, ancak bu işlem Python yorumlayıcısını ve gereken modülleri paketler. Bu yüzden sonuç, doğrudan C ile yazılmış bir ikili kadar küçük veya düşük bellekli olmayabilir.
+
 <p align="center">
   <img src=https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYWRyaHB0dWd6enN3c21iZHB4MnBjdnlzMnBmYXF5dm9ka2xoeDB0YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3d0PahT093UPe/giphy.gif>
 </p>
