@@ -35,25 +35,37 @@ def parse_args():
         help="Yük profili kayıt periyodu (saniye). Test için düşürebilirsiniz. "
         "Gerçekte 15 dk = 900 sn.",
     )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        default=Path("."),
+        help="Sayaç kayıt dizini: yük profili ve snapshot hem buradan okunur hem buraya yazılır "
+        "(varsayılan: ./)",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    data_file = Path(f"{args.meter_id}_data.txt")
+    storage_dir = args.output.expanduser().resolve()
+    storage_dir.mkdir(parents=True, exist_ok=True)
 
     meter = MeterSimulator(
-        data_file=data_file,
+        storage_dir=storage_dir,
+        meter_id=args.meter_id,
         interval_seconds=args.interval_seconds,
     )
+    data_file = meter.data_file
     meter.start()
 
     server = MeterTCPServer(args.host, args.port, meter, meter_id=args.meter_id)
     server.start()
 
     print(
-        f"TCP sayaç simülatörü {args.host}:{args.port} üzerinde çalışıyor. "
+        f"TCP sayaç simülatörü {args.host}:{args.port} üzerinde çalışıyor.\n"
+        f"Kayıt dizini (okuma/yazma): {meter.storage_dir}\n"
         f"Yük profili dosyası: {data_file}"
     )
     print(

@@ -50,13 +50,20 @@ class MeterState:
 class MeterSimulator:
     """
     Simülatör:
-    - Ana load profile dosyası append-only
-    - Snapshot dosyası otomatik oluşturulur (_total_endex.txt)
-    - get_load_profile_between diskten okuyarak çalışır
+    - Kalıcı veri tek bir dizinde: storage_dir (yük profili + snapshot).
+    - Açılışta ve istekte disk okuması yalnızca bu dizindeki dosyalardan yapılır.
+    - Ana load profile dosyası append-only; snapshot (_total_endex.txt) aynı dizinde.
     """
 
-    def __init__(self, data_file: Path, interval_seconds: int = LOAD_PROFILE_INTERVAL_MINUTES * 60):
+    def __init__(
+        self,
+        storage_dir: Path,
+        meter_id: str,
+        interval_seconds: int = LOAD_PROFILE_INTERVAL_MINUTES * 60,
+    ):
         self.state = MeterState()
+        self.storage_dir = storage_dir.expanduser().resolve()
+        data_file = self.storage_dir / f"{meter_id}_data.txt"
         self.data_file = data_file
         # Snapshot dosyasını ana dosya isminden türet
         stem = data_file.stem
@@ -88,8 +95,8 @@ class MeterSimulator:
 
     def get_load_profile_between(self, start: datetime, end: datetime) -> List[LoadProfileEntry]:
         """
-        Diskten satır satır okuyarak aralıkta olan yük profillerini döndürür.
-        RAM’de tüm geçmiş yüklenmez.
+        storage_dir altındaki yük profili dosyasını diskten satır satır okuyarak
+        aralıkta olan kayıtları döndürür. RAM’de tüm geçmiş yüklenmez.
         """
         results = []
         try:
