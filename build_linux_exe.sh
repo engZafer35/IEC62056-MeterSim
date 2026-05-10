@@ -87,6 +87,7 @@ case "$MODE" in
     python -m nuitka \
       --standalone \
       --onefile \
+      --output-filename=emeter_sim \
       --output-dir="$DIST_DIR" \
       run_simulator.py
     ;;
@@ -97,7 +98,7 @@ case "$MODE" in
     echo "Creating standalone executable with PyInstaller..."
     python -m PyInstaller \
       --onefile \
-      --name MeterSimulator \
+      --name emeter_sim \
       --distpath "$DIST_DIR" \
       run_simulator.py
     ;;
