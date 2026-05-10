@@ -10,38 +10,36 @@ from tcp_server import MeterTCPServer
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="IEC 62056 TCP elektrik sayacı simülatörü"
+        description="IEC 62056 TCP electricity meter simulator"
     )
     parser.add_argument(
         "--host",
         default="0.0.0.0",
-        help="Dinlenecek IP adresi (varsayılan: 127.0.0.1)",
+        help="Bind address (default: 0.0.0.0)",
     )
     parser.add_argument(
         "--port",
         type=int,
         default=5000,
-        help="Dinlenecek TCP portu (varsayılan: 5000)",
+        help="TCP port to listen on (default: 5000)",
     )
     parser.add_argument(
         "--meter-id",
         default="ZD5ME666-1003",
-        help="Sayaç kimliği / model numarası (varsayılan: ZD5ME666-1003)",
+        help="Meter ID / model string (default: ZD5ME666-1003)",
     )
     parser.add_argument(
         "--interval-seconds",
         type=int,
         default=15 * 60,
-        help="Yük profili kayıt periyodu (saniye). Test için düşürebilirsiniz. "
-        "Gerçekte 15 dk = 900 sn.",
+        help="Load profile append interval in seconds (default 900 = 15 min; lower for testing)",
     )
     parser.add_argument(
         "--output",
         "-o",
         type=Path,
         default=Path("."),
-        help="Sayaç kayıt dizini: yük profili ve snapshot hem buradan okunur hem buraya yazılır "
-        "(varsayılan: ./)",
+        help="Data directory: load profile and snapshot files are read/written here (default: ./)",
     )
     return parser.parse_args()
 
@@ -64,33 +62,33 @@ def main() -> None:
     server.start()
 
     print(
-        f"TCP sayaç simülatörü {args.host}:{args.port} üzerinde çalışıyor.\n"
-        f"Kayıt dizini (okuma/yazma): {meter.storage_dir}\n"
-        f"Yük profili dosyası: {data_file}"
+        f"TCP meter simulator listening on {args.host}:{args.port}\n"
+        f"Data directory (read/write): {meter.storage_dir}\n"
+        f"Load profile file: {data_file}"
     )
     print(
-        "Bağlantı akışı:\n"
-        "1) /?!\\r\\n gönder → sayaç kimliği gelir\n"
-        "2) ACK050\\r\\n gönder → sayaç short readout paketini gönderir\n"
-        "3) P.01(YYMMDDhhmm)(YYMMDDhhmm)\\r\\n → yük profili cevabı"
+        "Protocol flow:\n"
+        "1) Send /?!\\r\\n -> identification response\n"
+        "2) Send ACK050\\r\\n -> short/default OBIS readout\n"
+        "3) P.01(YYMMDDhhmm)(YYMMDDhhmm)\\r\\n -> load profile response"
     )
 
     def shutdown():
-        print("\nKapatılıyor...")
+        print("\nShutting down...")
         server.stop()
         meter.stop()
-        print("Temiz kapandı.")
+        print("Stopped cleanly.")
         sys.exit(0)
 
     def handle_sig(sig, frame):
         shutdown()
 
-    # Signal handler (Windows'ta SIGTERM her zaman çalışmayabilir ama zararı yok)
+    # SIGTERM may not work on all Windows setups; harmless if ignored.
     signal.signal(signal.SIGINT, handle_sig)
     if hasattr(signal, "SIGTERM"):
         signal.signal(signal.SIGTERM, handle_sig)
 
-    # 🔥 Windows uyumlu bekleme
+    # Sleep loop (works on Windows without signal.pause)
     try:
         while True:
             time.sleep(1)

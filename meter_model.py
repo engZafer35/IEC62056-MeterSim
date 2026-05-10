@@ -26,7 +26,7 @@ class MeterState:
     total_export_kwh: float = 0.0  # 2.8.0
     instant_power_kw: float = 0.0  # 1.7.0
     voltage_v: float = 230.0  # 32.7.0
-    # Son interval RAM’de tutulacak, eski tüm geçmiş diskten okunacak
+    # Latest interval in RAM; older history is read from disk when needed
     last_interval: LoadProfileEntry = None
 
     def snapshot_obis_readout(self) -> str:
@@ -49,10 +49,10 @@ class MeterState:
 
 class MeterSimulator:
     """
-    Simülatör:
-    - Kalıcı veri tek bir dizinde: storage_dir (yük profili + snapshot).
-    - Açılışta ve istekte disk okuması yalnızca bu dizindeki dosyalardan yapılır.
-    - Ana load profile dosyası append-only; snapshot (_total_endex.txt) aynı dizinde.
+    Simulator:
+    - Persistent data under storage_dir (load profile + snapshot files).
+    - All disk reads/writes use files in that directory only.
+    - Load profile file is append-only; snapshot (_total_endex.txt) lives beside it.
     """
 
     def __init__(
@@ -65,7 +65,7 @@ class MeterSimulator:
         self.storage_dir = storage_dir.expanduser().resolve()
         data_file = self.storage_dir / f"{meter_id}_data.txt"
         self.data_file = data_file
-        # Snapshot dosyasını ana dosya isminden türet
+        # Derive snapshot filename from load profile filename
         stem = data_file.stem
         if stem.endswith("_data"):
             base = stem[: -len("_data")]
@@ -77,7 +77,7 @@ class MeterSimulator:
         self._lock = threading.Lock()
         self._stop_event = threading.Event()
         self._thread = threading.Thread(target=self._run_loop, daemon=True)
-        self._load_snapshot()  # Açılışta snapshot yüklenir
+        self._load_snapshot()  # Restore state from disk at startup
 
     # ---------- public API ----------
 
@@ -87,7 +87,7 @@ class MeterSimulator:
     def stop(self) -> None:
         self._stop_event.set()
         self._thread.join(timeout=2.0)
-        self._save_snapshot()  # Kapanışta snapshot güncellenir
+        self._save_snapshot()  # Persist snapshot on shutdown
 
     def get_obis_readout(self) -> str:
         with self._lock:
@@ -95,8 +95,8 @@ class MeterSimulator:
 
     def get_load_profile_between(self, start: datetime, end: datetime) -> List[LoadProfileEntry]:
         """
-        storage_dir altındaki yük profili dosyasını diskten satır satır okuyarak
-        aralıkta olan kayıtları döndürür. RAM’de tüm geçmiş yüklenmez.
+        Stream-read the load profile file under storage_dir line by line and return
+        entries whose timestamps fall in [start, end]. Full history is not loaded into RAM.
         """
         results = []
         try:
@@ -168,9 +168,9 @@ class MeterSimulator:
 
     def _load_snapshot(self) -> None:
         """
-        Snapshot dosyasını oku:
-        - total_import_kwh ve son timestamp alınır
-        - RAM’de sadece son interval tutulur
+        Read snapshot file:
+        - Restore total_import_kwh and last timestamp
+        - Only the latest interval is kept in RAM when reconstructing from profile lines
         """
         last_entry = None
         if self.data_file.exists():
@@ -207,7 +207,7 @@ class MeterSimulator:
 
     def _save_snapshot(self) -> None:
         """
-        Snapshot dosyasına son timestamp ve toplam import yazılır
+        Write last timestamp and cumulative total_import to the snapshot file.
         """
         self.snapshot_file.parent.mkdir(parents=True, exist_ok=True)
         last_ts = self.state.last_interval.timestamp if self.state.last_interval else datetime.now()

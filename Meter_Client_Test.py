@@ -75,7 +75,7 @@ def query_meter(host, port, start, end):
             print("ACK Response:")
             print(s.recv(1024).decode())
 
-            # 3. Load profile – receive in chunks until "!\r\n" (end of response)
+            # 3. Load profile - receive in chunks until "!\r\n" (end of response)
             request = f"P.01({start})({end})\r\n".encode()
             print(f"Sending load profile request: {request.decode().strip()}")
             s.sendall(request)
@@ -90,7 +90,7 @@ def query_meter(host, port, start, end):
 def main():
     args = parse_args()
 
-    # Eğer end belirtilmemişse şu anki zaman
+    # If end is omitted, use current time
     if args.end is None:
         args.end = datetime.now().strftime("%y%m%d%H%M")
 

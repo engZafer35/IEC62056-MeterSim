@@ -44,7 +44,7 @@ class ConnectionState:
             # Respond with meter ID
             return self.config.meter_id + CRLF
 
-        # 2) ACK0x0 (baudrate change) – for TCP we just accept and ignore baud
+        # 2) ACK0x0 (baudrate change) - for TCP we just accept and ignore baud
         if line.upper().startswith("ACK") and self.handshake_done:
             self.baudrate_ack_received = True
             # Immediately send short/default readout as many meters do
