@@ -40,6 +40,8 @@ class MeterTCPServer:
         self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._sock.bind((self.host, self.port))
         self._sock.listen(100)
+        # Non-blocking accept so we can drain the backlog without wedging the select loop.
+        self._sock.setblocking(False)
 
         self._io_thread = threading.Thread(target=self._select_loop, daemon=True)
         self._io_thread.start()
@@ -97,6 +99,8 @@ class MeterTCPServer:
         while True:
             try:
                 conn, addr = listen_sock.accept()
+            except BlockingIOError:
+                break
             except OSError:
                 break
             print(
