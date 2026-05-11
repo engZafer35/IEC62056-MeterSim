@@ -52,7 +52,7 @@
   <!-- Step 2: TCP Server -->
   <rect x="220" y="100" width="150" height="80" rx="14" ry="14" fill="url(#step)" stroke="#1F2937" stroke-width="1.3"/>
   <text x="236" y="126" fill="#E5E7EB" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600">
-    TCP Sunucu
+    TCP Server
   </text>
   <text x="236" y="144" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="11">
     MeterTCPServer
@@ -97,7 +97,7 @@
     <tspan x="552" dy="1.2em">records</tspan>
   </text>
 
-  <!-- Oklar -->
+  <!-- Arrows -->
   <path d="M190 140 H214" stroke="url(#edge)" stroke-width="2.1" stroke-linecap="round"/>
   <path d="M208 135 L214 140 L208 145" fill="#4ADE80"/>
 

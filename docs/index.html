@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title>IEC62056 MeterSim – Elektrik Sayacı Simülatörü</title>
+    <title>IEC62056 MeterSim – Electricity Meter Simulator</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -17,12 +17,12 @@
           <span class="logo-text">Zafer Satılmış - IEC62056 MeterSim</span>
         </div>
         <nav class="nav">
-          <a href="#overview">Genel Bakış</a>
-          <a href="#architecture">Mimari</a>
-          <a href="#protocol">Protokol Akışı</a>
+          <a href="#overview">Overview</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#protocol">Protocol Flow</a>
           <a href="#client">Client</a>
-          <a href="#get-started">Başlarken</a>
-          <a href="#downloads">Kaynak Kod</a>
+          <a href="#get-started">Get Started</a>
+          <a href="#downloads">Source Code</a>
         </nav>
       </div>
     </header>
@@ -31,51 +31,51 @@
       <section id="hero" class="hero">
         <div class="container hero-inner">
           <div class="hero-text">
-            <h1>IEC 62056 Elektrik Sayacı Simülatörü</h1>
+            <h1>IEC 62056 Electricity Meter Simulator</h1>
             <p class="hero-subtitle">
-              Geliştiriciler, test mühendisleri ve gömülü sistem tasarımcıları için
-              <strong>IEC 62056-21 uyumlu</strong> TCP tabanlı elektrik sayacı simülatörü.
-              Gerçek donanıma ihtiyaç duymadan entegrasyonlarınızı test edin.
+              A TCP-based <strong>IEC 62056-21 compliant</strong> electricity meter simulator
+              for developers, test engineers, and embedded system designers.
+              Test your integrations without the need for real hardware.
             </p>
             <div class="hero-actions">
-              <a href="#get-started" class="btn primary">Hemen Başlayın</a>
-              <a href="#architecture" class="btn ghost">Mimariyi İnceleyin</a>
+              <a href="#get-started" class="btn primary">Get Started</a>
+              <a href="#architecture" class="btn ghost">Explore the Architecture</a>
             </div>
             <ul class="hero-highlights">
-              <li>Short/default readout (OBIS 1.8.0, 1.7.0, 32.7.0, tarih/saat)</li>
-              <li>15 dk aralıklı yük profili (P.01) simülasyonu</li>
-              <li>TCP üzerinden IEC 62056 benzeri mesaj akışı</li>
+              <li>Short/default readout (OBIS 1.8.0, 1.7.0, 32.7.0, date/time)</li>
+              <li>15-minute interval load profile (P.01) simulation</li>
+              <li>IEC 62056-like message flow over TCP</li>
             </ul>
           </div>
           <div class="hero-visual">
             <div class="meter-card">
               <div class="meter-header">
-                <span class="meter-title">Elektrik Sayacı</span>
-                <span class="meter-tag">Simülatör</span>
+                <span class="meter-title">Electricity Meter</span>
+                <span class="meter-tag">Simulator</span>
               </div>
               <div class="meter-body">
                 <figure class="meter-figure">
                   <img
                     src="meter.svg"
-                    alt="Elektrik sayacı illüstrasyonu"
+                    alt="Electricity meter illustration"
                     class="meter-image"
                   />
                 </figure>
                 <div class="meter-readout">
                   <div class="meter-row">
-                    <span class="label">Seri No</span>
+                    <span class="label">Serial No</span>
                     <span class="value">12345678</span>
                   </div>
                   <div class="meter-row">
-                    <span class="label">Toplam Enerji</span>
+                    <span class="label">Total Energy</span>
                     <span class="value">0012345.67 kWh</span>
                   </div>
                   <div class="meter-row">
-                    <span class="label">Anlık Güç</span>
+                    <span class="label">Instant Power</span>
                     <span class="value">0001.42 kW</span>
                   </div>
                   <div class="meter-row">
-                    <span class="label">Gerilim</span>
+                    <span class="label">Voltage</span>
                     <span class="value">230.4 V</span>
                   </div>
                 </div>
@@ -91,36 +91,36 @@
 
       <section id="overview" class="section">
         <div class="container">
-          <h2>Bu Proje Ne Yapar?</h2>
+          <h2>What Does This Project Do?</h2>
           <p class="section-lead">
-            IEC 62056-21 protokolüne benzer bir akışla, elektrik sayacını
-            <strong>tamamen yazılım tabanlı</strong> olarak simüle eder. Gerçek ölçüm yapmaz;
-            bunun yerine zaman içinde artan, pozitif ve tutarlı bir enerji tüketim profili oluşturur.
+            It simulates an electricity meter in a <strong>fully software-based</strong> manner,
+            using a message flow similar to the IEC 62056-21 protocol. It does not perform real
+            measurements; instead, it generates a positive, consistent energy consumption profile
+            that increases over time.
           </p>
           <div class="grid grid-3">
             <article class="card">
               <h3>Short / Default Readout</h3>
               <p>
-                Tipik sayaçlarda olduğu gibi <code>/?!</code> handshake ve
-                <code>ACK050</code> sonrasında, seri numarası, toplam tüketim,
-                anlık güç, gerilim ve tarih/saat bilgilerini içeren bir short readout üretir.
+                Just like typical meters, after the <code>/?!</code> handshake and
+                <code>ACK050</code>, it produces a short readout containing the serial number,
+                total consumption, instant power, voltage, and date/time information.
               </p>
             </article>
             <article class="card">
-              <h3>Yük Profili (Load Profile)</h3>
+              <h3>Load Profile</h3>
               <p>
-                15 dakikalık aralıklarla (veya test için hızlandırılmış periyotlarla)
-                tüketim değerleri kaydeder. Bu değerler hem dosyaya
-                (<code>P.01(YYMMDDhhmm)(vvvv.vv)</code>) yazılır hem de protokol üzerinden
-                sorgulanabilir.
+                It records consumption values at 15-minute intervals (or accelerated periods for
+                testing). These values are both written to a file
+                (<code>P.01(YYMMDDhhmm)(vvvv.vv)</code>) and queryable over the protocol.
               </p>
             </article>
             <article class="card">
-              <h3>Geliştirici Dostu Mimari</h3>
+              <h3>Developer-Friendly Architecture</h3>
               <p>
-                TCP sunucu, protokol katmanı ve sayaç çekirdeği birbirinden ayrıdır.
-                Böylece UI, gerçek donanım entegrasyonu veya ek OBIS komutlarını
-                kolayca ekleyebilirsiniz.
+                The TCP server, protocol layer, and meter core are decoupled from each other.
+                This makes it easy to add a UI, integrate real hardware, or implement additional
+                OBIS commands.
               </p>
             </article>
           </div>
@@ -129,17 +129,17 @@
 
       <section id="architecture" class="section alt">
         <div class="container">
-          <h2>Mimari Genel Bakış</h2>
+          <h2>Architecture Overview</h2>
           <p class="section-lead">
-            Proje, gerçek bir sayacın davranışını modüler katmanlara bölerek simüle eder.
-            Aşağıdaki görsel, TCP client'tan sayaç çekirdeğine ve yük profili dosyasına
-            kadar olan veri akışını üst düzeyde özetler.
+            The project simulates a real meter's behavior by breaking it down into modular layers.
+            The visual below provides a high-level summary of the data flow from the TCP client,
+            through the meter core, to the load profile file.
           </p>
 
           <div class="architecture-visual">
             <img
               src="architecture.svg"
-              alt="IEC 62056 MeterSim mimarisini gösteren diyagram: TCP client, TCP sunucu, protokol katmanı, sayaç çekirdeği ve yük profili dosyası arasındaki veri akışı"
+              alt="Diagram showing the IEC 62056 MeterSim architecture: data flow between TCP client, TCP server, protocol layer, meter core, and load profile file"
               class="architecture-image"
             />
           </div>
@@ -148,10 +148,10 @@
 
       <section id="protocol" class="section">
         <div class="container">
-          <h2>Protokol Akışı</h2>
+          <h2>Protocol Flow</h2>
           <p class="section-lead">
-            Simülatör, seri port yerine TCP kullanır; ancak mesaj akışı klasik
-            IEC 62056-21 sayacı ile aynıdır.
+            The simulator uses TCP instead of a serial port; however, the message flow is the same
+            as a classic IEC 62056-21 meter.
           </p>
 
           <div class="protocol-flow">
@@ -177,7 +177,7 @@ Meter  → Client :
               <h3>3. Load Profile (P.01)</h3>
               <pre><code>Client → Meter: 
   P.01(YYMMDDhhmm)(YYMMDDhhmm)
-  Ör: P.01(2401010000)(2401020000)
+  e.g.: P.01(2401010000)(2401020000)
 Meter  → Client :
   P.01(2401010000)(0000.42)
   P.01(2401010015)(0000.38)
@@ -190,32 +190,32 @@ Meter  → Client :
 
       <section id="get-started" class="section alt">
         <div class="container">
-          <h2>Hızlı Başlangıç</h2>
+          <h2>Quick Start</h2>
           <div class="grid grid-2">
             <div>
-              <h3>1. Simülatörü Çalıştırın</h3>
+              <h3>1. Run the Simulator</h3>
               <pre><code>python run_simulator.py --host 127.0.0.1 --port 5000 \
   --interval-seconds 10</code></pre>
               <p>
-                Yukarıdaki örnek, 15 dakikalık intervali test için <strong>10 saniyeye</strong>
-                düşürür. Gerçekte 15 dk kullanmak için <code>--interval-seconds 900</code>
-                parametresini verebilirsiniz.
+                The example above reduces the 15-minute interval to <strong>10 seconds</strong>
+                for testing. To use the actual 15-minute interval, you can pass the
+                <code>--interval-seconds 900</code> parameter.
               </p>
 
               <pre><code>
 python run_simulator.py --host 127.0.0.1 --port 5000 --meter-id ZD5ME666-667</code></pre>
-              <p>Özel port ve meter-ID örneği.</p>
+              <p>Example with a custom port and meter ID.</p>
 
             </div>
             <div>
-              <h3>2. TCP Client ile Bağlanın</h3>
+              <h3>2. Connect with a TCP Client</h3>
               <pre><code>telnet 127.0.0.1 5000
 /?!&lt;Enter&gt;
 ACK050&lt;Enter&gt;
 P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
               <p>
-                İsterseniz kendi STM32 / UART köprünüzle de aynı mesajları göndererek
-                entegrasyon testleri yapabilirsiniz.
+                If you wish, you can also send the same messages from your own STM32 / UART bridge
+                to run integration tests.
               </p>
             </div>
           </div>
@@ -224,43 +224,43 @@ P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
 
       <section id="client" class="section">
         <div class="container">
-          <h2>TCP Client Test Uygulaması</h2>
+          <h2>TCP Client Test Application</h2>
           <p class="section-lead">
-            <code>Meter_Client_Test.py</code>, simülatöre belirli aralıklarla bağlanıp hem
-            kimlik/short readout hem de seçtiğiniz tarih aralığı için yük profili (P.01) sorgulayan
-            basit bir test client'ıdır.
+            <code>Meter_Client_Test.py</code> is a simple test client that connects to the
+            simulator at given intervals and queries both the identification/short readout and
+            the load profile (P.01) for a date range you choose.
           </p>
 
           <div class="grid grid-2">
             <div>
-              <h3>1. Client Ne İşe Yarar?</h3>
+              <h3>1. What Does the Client Do?</h3>
               <p>
-                Bu script, gerçek bir uygulama veya gömülü cihazın yapacağı çağrıları taklit eder:
+                This script imitates the calls a real application or embedded device would make:
               </p>
               <ul class="section-list">
-                <li>Belirtilen IP/port'a TCP bağlantısı açar.</li>
-                <li><code>/?!</code> gönderip sayaç ID'sini okur.</li>
-                <li><code>ACK050</code> gönderip short/full OBIS readout cevabını alır.</li>
-                <li><code>P.01(start)(end)</code> komutu ile yük profili verilerini çeker.</li>
-                <li>Belirlediğiniz saniye aralığında bu işlemi tekrarlar (sürekli izleme).</li>
+                <li>Opens a TCP connection to the specified IP/port.</li>
+                <li>Sends <code>/?!</code> and reads the meter ID.</li>
+                <li>Sends <code>ACK050</code> and receives the short/full OBIS readout response.</li>
+                <li>Fetches load profile data with the <code>P.01(start)(end)</code> command.</li>
+                <li>Repeats this operation at your specified second interval (continuous monitoring).</li>
               </ul>
             </div>
             <div>
-              <h3>2. Nasıl Çalıştırılır?</h3>
+              <h3>2. How to Run It</h3>
               <pre><code>python Meter_Client_Test.py --host 127.0.0.1 --port 5000 \
   --interval 10 --start 2603171000 --end 2603171050</code></pre>
-              <p><strong>Argümanlar:</strong></p>
+              <p><strong>Arguments:</strong></p>
               <ul class="section-list">
-                <li><code>--host</code>: Sayaç simülatörünün IP adresi (varsayılan <code>127.0.0.1</code>).</li>
-                <li><code>--port</code>: TCP portu (varsayılan <code>5000</code>).</li>
-                <li><code>--interval</code>: Sorgular arasındaki bekleme süresi/sn (varsayılan <code>10</code>).</li>
+                <li><code>--host</code>: IP address of the meter simulator (default <code>127.0.0.1</code>).</li>
+                <li><code>--port</code>: TCP port (default <code>5000</code>).</li>
+                <li><code>--interval</code>: Wait time between queries in seconds (default <code>10</code>).</li>
                 <li>
-                  <code>--start</code>: Yük profili başlangıç zamanı
-                  <code>YYMMDDhhmm</code> formatında (varsayılan <code>2603171000</code>).
+                  <code>--start</code>: Load profile start time in
+                  <code>YYMMDDhhmm</code> format (default <code>2603171000</code>).
                 </li>
                 <li>
-                  <code>--end</code>: Bitiş zamanı (<code>YYMMDDhhmm</code>). Boş bırakılırsa script
-                  çalıştığı andaki zamanı kullanır.
+                  <code>--end</code>: End time (<code>YYMMDDhhmm</code>). If left empty, the script
+                  uses the current time at runtime.
                 </li>
               </ul>
             </div>
@@ -268,17 +268,17 @@ P.01(2401010000)(2401012359)&lt;Enter&gt;</code></pre>
 
           <div class="grid grid-2" style="margin-top: 1.6rem;">
             <div>
-              <h3>3. İletişim Akışı (Sequence Diagram)</h3>
+              <h3>3. Communication Flow (Sequence Diagram)</h3>
               <div class="sequence-diagram-wrap">
                 <img
                   src="sequence-diagram.png"
-                  alt="Client ile simülatör arasındaki istek akışı: TCP connect, handshake, OBIS readout, load profile sorgusu ve döngü"
+                  alt="Request flow between the client and the simulator: TCP connect, handshake, OBIS readout, load profile query, and loop"
                   class="sequence-diagram-img"
                 />
               </div>
             </div>
             <div>
-              <h3>4. Örnek Çıktı</h3>
+              <h3>4. Sample Output</h3>
               <pre class="ascii-diagram"><code>Starting TCP client...
 Target: 127.0.0.1:5000
 Interval: 10 sec
@@ -306,34 +306,34 @@ P.01(2603171050)(0000.54)
           </div>
 
           <div style="margin-top: 1.8rem;">
-            <h3>5. Yük Profili Dosyaları</h3>
+            <h3>5. Load Profile Files</h3>
             <p class="section-lead">
-              Simülatör, ürettiği yük profilini ve toplam endeksi disk üzerinde iki dosyada
-              saklar. Bu dosyalar, sayaç belleği gibi davranır ve uygulama yeniden başlasa bile
-              tüketim toplamının korunmasını sağlar.
+              The simulator stores the load profile it produces and the total index on disk in two
+              files. These files act as the meter's memory and ensure that the consumption total is
+              preserved even if the application restarts.
             </p>
             <div class="grid grid-2">
               <div>
-                <h4><code>meter_data.txt</code> (Yük Profili Kayıtları)</h4>
-                <p>Her satır bir interval için tüketimi temsil eder:</p>
+                <h4><code>meter_data.txt</code> (Load Profile Records)</h4>
+                <p>Each line represents the consumption for one interval:</p>
                 <pre class="ascii-diagram"><code>P.01(2603171048)(0000.51)
 P.01(2603171049)(0000.45)
 P.01(2603171050)(0000.54)
 ...</code></pre>
                 <p>
-                  Format: <code>P.01(YYMMDDhhmm)(vvvv.vv)</code> &rarr; verilen zaman diliminde
-                  tüketilen enerji (kWh).
+                  Format: <code>P.01(YYMMDDhhmm)(vvvv.vv)</code> &rarr; the energy consumed
+                  (kWh) during the given time slice.
                 </p>
               </div>
               <div>
-                <h4><code>meter_data_total_endex.txt</code> (Toplam Endeks)</h4>
-                <p>Son zaman damgası ve toplam tüketim bilgisini içerir:</p>
+                <h4><code>meter_data_total_endex.txt</code> (Total Index)</h4>
+                <p>Contains the last timestamp and total consumption information:</p>
                 <pre class="ascii-diagram"><code>last_timestamp(2603171050)
 total_import(25.73)</code></pre>
                 <p>
-                  Uygulama başlatıldığında bu dosya okunur ve <code>1.8.0</code> OBIS değeri
-                  (toplam enerji) bu endekse göre ayarlanır. Böylece sayaç, gerçek bir cihaz gibi
-                  kaldığı yerden devam eder.
+                  When the application starts, this file is read and the <code>1.8.0</code> OBIS
+                  value (total energy) is set according to this index. This way the meter resumes
+                  from where it left off, just like a real device.
                 </p>
               </div>
             </div>
@@ -343,10 +343,10 @@ total_import(25.73)</code></pre>
 
       <section id="downloads" class="section">
         <div class="container">
-          <h2>Kaynak Kod ve İndirme</h2>
+          <h2>Source Code and Download</h2>
           <p class="section-lead">
-            Projeyi doğrudan GitHub üzerinden inceleyebilir veya Python uygulamasının sıkıştırılmış
-            halini indirerek hızlıca deneyebilirsiniz.
+            You can review the project directly on GitHub or download the packaged version of the
+            Python application to try it out quickly.
           </p>
           <div class="download-grid">
             <a
@@ -363,7 +363,7 @@ total_import(25.73)</code></pre>
               target="_blank"
               rel="noopener noreferrer"
             >
-              ZIP Olarak İndir (Python Projesi)
+              Download as ZIP (Python Project)
             </a>
             <a
               class="btn-link"
@@ -371,7 +371,7 @@ total_import(25.73)</code></pre>
               target="_blank"
               rel="noopener noreferrer"
             >
-              Dinle İndir
+              Project Music
             </a>
             
           </div>
@@ -380,15 +380,15 @@ total_import(25.73)</code></pre>
 
       <section class="section">
         <div class="container">
-          <h2>Günlük Tüketim Görselleştirme</h2>
+          <h2>Daily Consumption Visualization</h2>
           <p class="section-lead">
-            Simülatörün ürettiği yük profili ile, günlük tüketimi basit ama şık bir
-            bar grafik olarak görselleştirebilirsiniz.
+            Using the load profile generated by the simulator, you can visualize daily consumption
+            as a simple yet elegant bar chart.
           </p>
           <div class="lp-chart">
             <div class="lp-chart-header">
-              <span>Örnek Günlük Yük Profili</span>
-              <span class="lp-chart-total">Toplam ≈ 12.34 kWh (1.8.0 ≈ 12.34 kWh)</span>
+              <span>Sample Daily Load Profile</span>
+              <span class="lp-chart-total">Total ≈ 12.34 kWh (1.8.0 ≈ 12.34 kWh)</span>
             </div>
             <div class="lp-chart-body">
               <div class="lp-row">
@@ -434,10 +434,9 @@ total_import(25.73)</code></pre>
 
     <footer class="site-footer">
       <div class="container footer-content">
-        <span>Zafer Satılmış - IEC 62056 MeterSim · Elektrik Sayacı Simülatörü</span>
-        <span class="footer-meta">Eğitim ve test amaçlı geliştirilmiştir.</span>
+        <span>Zafer Satılmış - IEC 62056 MeterSim · Electricity Meter Simulator</span>
+        <span class="footer-meta">Developed for educational and testing purposes.</span>
       </div>
     </footer>
   </body>
 </html>
-
